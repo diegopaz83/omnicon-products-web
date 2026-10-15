@@ -6,9 +6,11 @@ export interface DemoState {
   fault: boolean;
   // Id from demo.reasons, or null while the stop is unexplained
   reason: string | null;
+  // True once the operator restarts the line; the stop stays in the log
+  restarted: boolean;
 }
 
-export const INITIAL_STATE: DemoState = { fault: false, reason: null };
+export const INITIAL_STATE: DemoState = { fault: false, reason: null, restarted: false };
 
 const sum = (values: number[]) => values.reduce((total, value) => total + value, 0);
 
@@ -35,14 +37,14 @@ export function computeMetrics(demo: Demo, state: DemoState) {
   };
 }
 
-// Machine 2 shows Faulted only while its stop has no reason
+// Machine 2 stays Faulted until the operator restarts the line
 export function machineStatus(demo: Demo, state: DemoState, machineName: string): 'running' | 'faulted' {
-  const faulted = state.fault && !state.reason && machineName === demo.fault.machine;
+  const faulted = state.fault && !state.restarted && machineName === demo.fault.machine;
   return faulted ? 'faulted' : 'running';
 }
 
 export function messageKey(demo: Demo, state: DemoState): keyof Demo['messages'] {
   if (!state.fault) return 'idle';
   if (!state.reason) return 'unknown';
-  return demo.reasons.find((item) => item.id === state.reason)?.planned ? 'planned' : 'unplanned';
+  return state.restarted ? 'restarted' : 'restart';
 }

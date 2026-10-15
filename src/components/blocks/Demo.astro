@@ -91,6 +91,7 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
 
             <div class="controls">
               <button type="button" class="btn btn-fault" data-fault>{demo.fault.button}</button>
+              <button type="button" class="btn btn-signal" data-restart hidden>{ui.demo.restart}</button>
               <button type="button" class="btn btn-ghost-dark" data-reset hidden>{demo.reset}</button>
               <p class="message" data-message aria-live="polite">{demo.messages[messageKey(demo, INITIAL_STATE)]}</p>
             </div>
@@ -245,10 +246,12 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
     const renderControls = () => {
       const fault = q<HTMLButtonElement>('[data-fault]');
       const reset = q<HTMLButtonElement>('[data-reset]');
+      const restart = q<HTMLButtonElement>('[data-restart]');
       const prompt = q<HTMLElement>('[data-prompt]');
       const message = q<HTMLElement>('[data-message]');
       if (fault) fault.hidden = state.fault;
       if (reset) reset.hidden = !state.fault;
+      if (restart) restart.hidden = !(state.fault && state.reason && !state.restarted);
       if (prompt) prompt.hidden = !(state.fault && !state.reason);
       if (message) message.textContent = demo.messages[messageKey(demo, state)];
     };
@@ -314,7 +317,7 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
 
     // Guide: 1 running, 2 breakdown, 3 explain the stop, 4 see the OEE
     const renderSteps = () => {
-      const active = !state.fault ? 0 : !state.reason ? 2 : 3;
+      const active = !state.fault ? 0 : !state.reason ? 2 : !state.restarted ? 3 : 4;
       root.querySelectorAll<HTMLElement>('[data-step]').forEach((item) => {
         const index = Number(item.dataset.step);
         item.classList.toggle('done', index < active);
@@ -347,7 +350,7 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
 
     // Move focus to the next control so keyboard users keep their place
     q<HTMLButtonElement>('[data-fault]')?.addEventListener('click', () => {
-      state = { fault: true, reason: null };
+      state = { fault: true, reason: null, restarted: false };
       render();
       q<HTMLButtonElement>('[data-reason]')?.focus();
     });
@@ -358,6 +361,12 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
         render();
         q<HTMLButtonElement>('[data-reset]')?.focus();
       });
+    });
+
+    q<HTMLButtonElement>('[data-restart]')?.addEventListener('click', () => {
+      state = { ...state, restarted: true };
+      render();
+      q<HTMLButtonElement>('[data-reset]')?.focus();
     });
 
     q<HTMLButtonElement>('[data-reset]')?.addEventListener('click', () => {

@@ -99,8 +99,8 @@
     "messages": {
       "idle": "The line is running. Cause a breakdown to see what the MES does with it.",
       "unknown": "The PLC reported the stop. The MES logged it as Unknown and counts it as unplanned until a person explains it.",
-      "unplanned": "Reason recorded. It stays an unplanned loss, so availability drops.",
-      "planned": "Covered by the shift plan, so it no longer counts against availability."
+      "restart": "Reason recorded. Restart the line to resume production.",
+      "restarted": "Line restarted. The stop stays in the log with its reason and its effect on OEE."
     },
     "reset": "Reset the shift",
     "v2": { "engine": "three@0.160.1", "reference": "design/reference/production-management-3d.html" }

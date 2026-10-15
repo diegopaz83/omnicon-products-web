@@ -93,7 +93,8 @@
       "faulted": "Faulted",
       "faultAlert": "Stopped, no reason logged",
       "overview": "Overview",
-      "steps": ["Line running", "Breakdown on Machine 2", "Explain the stop", "See the OEE"]
+      "restart": "Restart the line",
+      "steps": ["Line running", "Breakdown on Machine 2", "Explain the stop", "Restart the line"]
     },
     "project": {
       "meta": "{designVersion}, pilot machine {pilot}, updated {updated}",
