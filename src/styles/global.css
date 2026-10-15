@@ -134,6 +134,11 @@ button {
   padding: var(--section-y) 0;
 }
 
+/* Keep hidden attribute effective when a class sets display */
+[hidden] {
+  display: none !important;
+}
+
 .skip-link {
   position: absolute;
   left: 16px;

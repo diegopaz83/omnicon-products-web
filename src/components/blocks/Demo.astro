@@ -13,6 +13,8 @@ const { ui } = getSite();
 
 const state = INITIAL_STATE;
 const metrics = demo ? computeMetrics(demo, state) : null;
+// Shared with the client script: formulas and copy stay in one place
+const config = demo ? { demo, ui: ui.demo } : null;
 ---
 {demo && metrics && (
   <section id="demo" class="section demo on-dark">
@@ -31,11 +33,11 @@ const metrics = demo ? computeMetrics(demo, state) : null;
             {demo.machines.map((machine) => {
               const status = machineStatus(demo, state, machine.name);
               return (
-                <article class="machine" data-machine={machine.name}>
+                <article class:list={['machine', status]} data-machine={machine.name}>
                   <svg viewBox="0 0 160 86" width="100%" height="86" aria-hidden="true">
                     <rect x="22" y="10" width="116" height="54" rx="8" fill="#16406f" />
-                    <rect x="36" y="22" width="44" height="26" rx="4" fill={status === 'faulted' ? 'var(--fault)' : 'var(--signal)'} />
-                    <circle cx="108" cy="35" r="11" fill="none" stroke={status === 'faulted' ? 'var(--fault)' : 'var(--signal)'} stroke-width="4" />
+                    <rect class="screen" x="36" y="22" width="44" height="26" rx="4" />
+                    <circle class="gauge" cx="108" cy="35" r="11" fill="none" stroke-width="4" />
                     <rect x="8" y="66" width="144" height="10" rx="5" fill="#25507f" />
                   </svg>
                   <div class="meta">
@@ -111,6 +113,143 @@ const metrics = demo ? computeMetrics(demo, state) : null;
     </div>
   </section>
 )}
+
+{config && (
+  <script type="application/json" id="demo-config" is:inline set:html={JSON.stringify(config).replace(/</g, '\\u003c')} />
+)}
+
+<script>
+  import { INITIAL_STATE, computeMetrics, machineStatus, messageKey } from '../../lib/demo';
+  import type { Demo, DemoState } from '../../lib/demo';
+  import { fill } from '../../lib/text';
+
+  const root = document.querySelector<HTMLElement>('#demo');
+  const configEl = document.getElementById('demo-config');
+
+  if (root && configEl?.textContent) {
+    const { demo, ui } = JSON.parse(configEl.textContent) as { demo: Demo; ui: Record<string, string> };
+    let state: DemoState = { ...INITIAL_STATE };
+
+    const q = <T extends Element>(selector: string) => root.querySelector<T>(selector);
+    const el = (tag: string, className: string, text: string) => {
+      const node = document.createElement(tag);
+      node.className = className;
+      node.textContent = text;
+      return node;
+    };
+
+    const renderMachines = () => {
+      root.querySelectorAll<HTMLElement>('[data-machine]').forEach((card) => {
+        const status = machineStatus(demo, state, card.dataset.machine ?? '');
+        const faulted = status === 'faulted';
+        card.classList.toggle('faulted', faulted);
+        const pill = card.querySelector<HTMLElement>('[data-status]');
+        if (pill) {
+          pill.classList.toggle('faulted', faulted);
+          pill.textContent = faulted ? ui.faulted : ui.running;
+        }
+      });
+    };
+
+    const renderControls = () => {
+      const fault = q<HTMLButtonElement>('[data-fault]');
+      const reset = q<HTMLButtonElement>('[data-reset]');
+      const prompt = q<HTMLElement>('[data-prompt]');
+      const message = q<HTMLElement>('[data-message]');
+      if (fault) fault.hidden = state.fault;
+      if (reset) reset.hidden = !state.fault;
+      if (prompt) prompt.hidden = !(state.fault && !state.reason);
+      if (message) message.textContent = demo.messages[messageKey(demo, state)];
+    };
+
+    // Seed events plus the breakdown while it is active
+    const renderEvents = () => {
+      const container = q<HTMLElement>('[data-events]');
+      if (!container) return;
+
+      const rows = demo.seedEvents.map((event) => ({
+        time: event.time,
+        machine: event.machine,
+        minutes: event.minutes,
+        reason: event.reason,
+        planned: event.planned,
+        unknown: false,
+      }));
+      if (state.fault) {
+        const reason = demo.reasons.find((item) => item.id === state.reason);
+        rows.push({
+          time: demo.fault.time,
+          machine: demo.fault.machine,
+          minutes: demo.fault.minutes,
+          reason: reason?.label ?? ui.unknown,
+          planned: !!reason?.planned,
+          unknown: !reason,
+        });
+      }
+
+      container.replaceChildren(
+        ...rows.map((row) => {
+          const line = el('div', 'ev', '');
+          line.append(
+            el('span', 'ev-time', row.time),
+            el('span', 'ev-machine', row.machine),
+            el('span', 'ev-minutes', fill(ui.minutes, { minutes: row.minutes })),
+            el('span', row.unknown ? 'ev-reason ev-unknown' : 'ev-reason', row.reason),
+            el('span', 'ev-kind', row.planned ? ui.planned : ui.unplanned),
+          );
+          return line;
+        }),
+      );
+    };
+
+    const renderMetrics = () => {
+      const metrics = computeMetrics(demo, state);
+      const oee = q<HTMLElement>('[data-oee]');
+      if (oee) oee.textContent = `${metrics.oee}%`;
+
+      for (const key of ['availability', 'performance', 'quality'] as const) {
+        const value = metrics[key];
+        const label = q<HTMLElement>(`[data-metric="${key}"]`);
+        const fillBar = q<HTMLElement>(`[data-fill="${key}"]`);
+        if (label) label.textContent = `${value}%`;
+        if (fillBar) fillBar.style.width = `${value}%`;
+      }
+
+      const unplanned = q<HTMLElement>('[data-unplanned-total]');
+      const planned = q<HTMLElement>('[data-planned-total]');
+      if (unplanned) unplanned.textContent = fill(ui.unplannedStops, { minutes: metrics.unplanned });
+      if (planned) planned.textContent = fill(ui.plannedStops, { minutes: metrics.planned });
+    };
+
+    const render = () => {
+      renderMachines();
+      renderControls();
+      renderEvents();
+      renderMetrics();
+    };
+
+    // Move focus to the next control so keyboard users keep their place
+    q<HTMLButtonElement>('[data-fault]')?.addEventListener('click', () => {
+      state = { fault: true, reason: null };
+      render();
+      q<HTMLButtonElement>('[data-reason]')?.focus();
+    });
+
+    root.querySelectorAll<HTMLButtonElement>('[data-reason]').forEach((button) => {
+      button.addEventListener('click', () => {
+        state = { ...state, reason: button.dataset.reason ?? null };
+        render();
+        q<HTMLButtonElement>('[data-reset]')?.focus();
+      });
+    });
+
+    q<HTMLButtonElement>('[data-reset]')?.addEventListener('click', () => {
+      state = { ...INITIAL_STATE };
+      render();
+      q<HTMLButtonElement>('[data-fault]')?.focus();
+    });
+  }
+</script>
 
 <style>
   .demo {
@@ -191,8 +330,22 @@ const metrics = demo ? computeMetrics(demo, state) : null;
     border: 2px solid var(--line-dark-soft);
   }
 
-  .machine:has(.pill.faulted) {
+  .screen {
+    fill: var(--signal);
+  }
+
+  .gauge {
+    stroke: var(--signal);
+  }
+
+  .machine.faulted {
     border-color: var(--fault);
+  }
+
+  .machine.faulted .screen,
+  .machine.faulted .gauge {
+    fill: var(--fault);
+    stroke: var(--fault);
   }
 
   .meta {
@@ -327,6 +480,10 @@ const metrics = demo ? computeMetrics(demo, state) : null;
 
   .ev-kind {
     flex: 0 0 90px;
+  }
+
+  .ev-unknown {
+    color: var(--fault);
   }
 
   .metrics {
