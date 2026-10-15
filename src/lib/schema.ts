@@ -69,6 +69,8 @@ const UiSchema = z.strictObject({
     minutes: text,
     running: text,
     faulted: text,
+    faultAlert: text,
+    steps: z.array(text).length(4),
   }),
   project: z.strictObject({
     meta: text,
@@ -171,7 +173,7 @@ const DemoSchema = z.strictObject({
   performance: z.number().min(0).max(1),
   quality: z.number().min(0).max(1),
   machines: z.array(
-    z.strictObject({ id: text, name: text, role: text, faultable: z.boolean().optional() }),
+    z.strictObject({ id: text, name: text, station: text, role: text, faultable: z.boolean().optional() }),
   ).min(1),
   seedEvents: z.array(
     z.strictObject({ time: text, machine: text, minutes: count, reason: text, planned: z.boolean() }),

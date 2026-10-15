@@ -83,9 +83,9 @@
     "performance": 0.85,
     "quality": 0.97,
     "machines": [
-      { "id": "m1", "name": "Machine 1", "role": "Infeed" },
-      { "id": "m2", "name": "Machine 2", "role": "Bottleneck, 1.5 s per part", "faultable": true },
-      { "id": "m3", "name": "Machine 3", "role": "Last machine" }
+      { "id": "m1", "name": "Machine 1", "station": "Infeed", "role": "Infeed" },
+      { "id": "m2", "name": "Machine 2", "station": "Filler", "role": "Bottleneck, 1.5 s per part", "faultable": true },
+      { "id": "m3", "name": "Machine 3", "station": "Capper", "role": "Last machine" }
     ],
     "seedEvents": [
       { "time": "10:05", "machine": "Machine 1", "minutes": 24, "reason": "Material shortage", "planned": false }

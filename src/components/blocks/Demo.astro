@@ -32,7 +32,14 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
         </div>
 
         <div class="view">
-          <div class="scene" data-scene role="img" aria-label={ui.twin.title}></div>
+          <div class="scene" data-scene role="img" aria-label={ui.twin.title}>
+            {demo.machines.map((machine) => (
+              <div class="tag" data-tag={machine.id}>
+                <span class="tag-name">{machine.name}: {machine.station}</span>
+                <span class="tag-state" data-tag-state>{ui.demo.running}</span>
+              </div>
+            ))}
+          </div>
 
           <aside class="hud-top">
             <p class="oee-label">{ui.demo.lineOee}</p>
@@ -72,6 +79,15 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
           </aside>
 
           <div class="hud-bottom">
+            <ol class="steps" data-steps>
+              {ui.demo.steps.map((label, index) => (
+                <li class:list={["step", { current: index === 0 }]} data-step={index}>
+                  <span class="step-num">{index + 1}</span>
+                  <span>{label}</span>
+                </li>
+              ))}
+            </ol>
+
             <div class="controls">
               <button type="button" class="btn btn-fault" data-fault>{demo.fault.button}</button>
               <button type="button" class="btn btn-ghost-dark" data-reset hidden>{demo.reset}</button>
@@ -147,6 +163,17 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
       twin.update({ machines: machines as Record<'m1' | 'm2' | 'm3', 'running' | 'faulted'>, running: true });
     };
 
+    // Keep each label anchored above its machine while the camera moves
+    const positionTags = () => {
+      if (!twin) return;
+      root.querySelectorAll<HTMLElement>('[data-tag]').forEach((tag) => {
+        const p = twin!.project(tag.dataset.tag as 'm1' | 'm2' | 'm3');
+        tag.style.transform = `translate(calc(${p.x}px - 50%), calc(${p.y}px - 100%))`;
+        tag.style.opacity = p.visible ? '1' : '0';
+      });
+      requestAnimationFrame(positionTags);
+    };
+
     const mount = async () => {
       const scene = q<HTMLElement>('[data-scene]');
       if (!scene || twin || mounting) return;
@@ -154,6 +181,8 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
       const { mountTwin } = await import('../../lib/twin/scene');
       twin = scene ? mountTwin(scene) : null;
       mounting = false;
+      if (twin) positionTags();
+      else root.querySelectorAll<HTMLElement>('[data-tag]').forEach((tag) => (tag.hidden = true));
       syncTwin();
     };
 
@@ -252,8 +281,33 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
       if (planned) planned.textContent = fill(ui.plannedStops, { minutes: metrics.planned });
     };
 
+    // Guide: 1 running, 2 breakdown, 3 explain the stop, 4 see the OEE
+    const renderSteps = () => {
+      const active = !state.fault ? 0 : !state.reason ? 2 : 3;
+      root.querySelectorAll<HTMLElement>('[data-step]').forEach((item) => {
+        const index = Number(item.dataset.step);
+        item.classList.toggle('done', index < active);
+        item.classList.toggle('current', index === active);
+      });
+    };
+
+    // Scene labels show the machine state, and an alert while a stop has no reason
+    const renderTags = () => {
+      root.querySelectorAll<HTMLElement>('[data-tag]').forEach((tag) => {
+        const machine = demo.machines.find((item) => item.id === tag.dataset.tag);
+        if (!machine) return;
+        const faulted = machineStatus(demo, state, machine.name) === 'faulted';
+        const alert = faulted && !state.reason;
+        tag.classList.toggle('alert', alert);
+        const stateEl = tag.querySelector<HTMLElement>('[data-tag-state]');
+        if (stateEl) stateEl.textContent = alert ? ui.faultAlert : faulted ? ui.faulted : ui.running;
+      });
+    };
+
     const render = () => {
       renderMachines();
+      renderSteps();
+      renderTags();
       renderControls();
       renderEvents();
       renderMetrics();
@@ -500,6 +554,93 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
     border: 1px solid #285476;
     border-radius: 14px;
     color: var(--on-dark);
+  }
+
+  .steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px 6px 6px;
+    border: 1px solid var(--line-dark);
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    color: var(--on-dark-muted);
+  }
+
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--panel-dark-2);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .step.done {
+    color: var(--on-dark);
+  }
+
+  .step.done .step-num {
+    background: var(--ok-bg);
+    color: var(--ok-fg);
+  }
+
+  .step.current {
+    border-color: var(--signal);
+    color: var(--on-dark);
+  }
+
+  .step.current .step-num {
+    background: var(--signal);
+    color: var(--night);
+  }
+
+  .tag {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 10px;
+    background: rgba(4, 23, 43, 0.92);
+    border: 1px solid #285476;
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--on-dark);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .tag-name {
+    font-weight: 600;
+  }
+
+  .tag-state {
+    font-size: 12px;
+    color: var(--signal);
+  }
+
+  .tag.alert {
+    border-color: var(--fault);
+  }
+
+  .tag.alert .tag-state {
+    color: var(--fault);
+    font-weight: 600;
   }
 
   .controls {
