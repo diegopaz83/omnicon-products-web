@@ -295,7 +295,7 @@ export function mountTwin(container: HTMLElement): Twin | null {
 
   // Label anchors above each machine, in world units
   const anchors: Record<TwinMachine, THREE.Vector3> = {
-    m1: new THREE.Vector3(-11.4, 2.6, 0),
+    m1: new THREE.Vector3(-2.5, 1.6, 1.8),
     m2: new THREE.Vector3(0, 6.6, 0),
     m3: new THREE.Vector3(5.35, 5.6, 0),
   };
