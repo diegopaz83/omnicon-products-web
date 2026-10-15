@@ -181,7 +181,6 @@ const DemoSchema = z.strictObject({
   messages: z.strictObject({ idle: text, unknown: text, unplanned: text, planned: text }),
   reset: text,
   v2: z.strictObject({ engine: text, reference: text }).optional(),
-  twin: z.strictObject({ src: text }).optional(),
 });
 
 const ProjectStatus = z.enum(['done', 'next', 'in-progress', 'not-started', 'blocked']);
