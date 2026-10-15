@@ -1,0 +1,58 @@
+{
+  "name": "Omnicon Products",
+  "logo": { "light": "brand/logo/omnicon-white.png", "dark": "brand/logo/omnicon-blue.png", "alt": "Omnicon" },
+  "nav": [
+    { "label": "Products", "href": "#products" },
+    { "label": "About Omnicon", "href": "#about" }
+  ],
+  "hero": {
+    "label": "Omnicon Products",
+    "title": "Industrial software, built where production happens.",
+    "subtitle": "Products Omnicon designs from real plant-floor projects: tools that turn equipment data into decisions your team can act on.",
+    "background": "brand/graphics/signal-wave-4.png"
+  },
+  "products": [
+    {
+      "slug": "mes",
+      "status": "available",
+      "statusLabel": "Available",
+      "category": "Manufacturing execution",
+      "name": "Omnicon MES",
+      "summary": "See your plant as it really runs. Live machine status, every stop with its reason, and OEE by machine, line and plant.",
+      "highlights": [
+        "Built on the ISA-95 standard",
+        "Works with Rockwell Logix PLCs and FactoryTalk Optix",
+        "Results by hour, shift and production order"
+      ],
+      "image": { "src": "products/mes/control-room.jpg", "alt": "Engineers reviewing production data on a control-room screen" },
+      "featured": true
+    },
+    {
+      "slug": null,
+      "status": "in-development",
+      "statusLabel": "In development",
+      "name": "[Next product name]",
+      "summary": "[One sentence on the problem it solves.]"
+    },
+    {
+      "slug": null,
+      "status": "planned",
+      "statusLabel": "Planned",
+      "name": "[Future product name]",
+      "summary": "[One sentence on the problem it solves.]"
+    }
+  ],
+  "about": {
+    "title": "Every product starts on a real line",
+    "body": "We build products from the projects we deliver: the same engineers who wire the PLC and configure the screens design the software that reads them. What works in one plant becomes a product for the next.",
+    "image": { "src": "site/team.jpg", "alt": "An Omnicon team planning a project around a whiteboard" },
+    "draft": true
+  },
+  "cta": {
+    "title": "Want to see a product running on your line?",
+    "body": "Tell us about your plant and we will set up a demo with your machines in mind.",
+    "button": "Request a demo",
+    "href": "mailto:[CONTACT_EMAIL]"
+  },
+  "footer": { "legal": "© 2026 Omnicon S.A.S. All rights reserved." }
+}

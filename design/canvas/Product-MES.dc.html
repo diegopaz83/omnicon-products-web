@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Omnicon MES</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#001C3F}
+a{color:#0A58EB}a:hover{color:#002473}
+a:focus-visible,button:focus-visible{outline:3px solid #00DCFA;outline-offset:3px}
+button{font-family:inherit;cursor:pointer}
+.hero-bg{background:#001C3F url(../../public/brand/graphics/signal-wave-2.png) right -120px bottom -60px / 900px auto no-repeat}
+.trace{height:4px;border-radius:2px;background:linear-gradient(90deg,#00DCFA,#7543FF)}
+@media (max-width:760px){.hide-sm{display:none !important}}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</helmet>
+<div style="font-family:'Poppins', Arial, sans-serif; color:#0E2440; background:#F3F7FB">
+
+<header style="background:#001C3F; padding:0 24px; border-bottom:1px solid #12315A">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; padding:20px 0">
+<div style="display:flex; align-items:center; gap:20px">
+<a href="Main.dc.html" aria-label="All Omnicon products" style="display:flex"><img src="../../public/brand/logo/omnicon-white.png" alt="Omnicon" style="height:30px; width:auto"></a>
+<span class="hide-sm" style="color:#7F93AE; font-size:15px">MES</span>
+</div>
+<nav aria-label="Page sections" style="display:flex; flex-wrap:wrap; gap:4px; align-items:center">
+<a href="#how" style="color:#E6EEF7; text-decoration:none; font-size:15px; padding:10px 12px">How it works</a>
+<a href="#demo" style="color:#E6EEF7; text-decoration:none; font-size:15px; padding:10px 12px">Live demo</a>
+<a href="#oee" style="color:#E6EEF7; text-decoration:none; font-size:15px; padding:10px 12px">OEE</a>
+<a href="#value" style="color:#E6EEF7; text-decoration:none; font-size:15px; padding:10px 12px">Value</a>
+<a href="#contact" style="color:#001C3F; background:#00DCFA; text-decoration:none; font-size:15px; font-weight:500; padding:10px 18px; border-radius:999px; margin-left:8px">Request a demo</a>
+</nav>
+</div>
+</header>
+
+<section class="hero-bg" style="color:#F2F7FC; padding:88px 24px 112px">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:56px; align-items:center">
+<div style="flex:1 1 460px; min-width:0; display:flex; flex-direction:column; gap:28px">
+<p style="margin:0; font-size:16px; font-weight:500; color:#00DCFA">Omnicon MES</p>
+<h1 style="margin:0; font-size:clamp(40px, 5.4vw, 72px); font-weight:300; line-height:1.06; letter-spacing:-0.02em">From machine signals to management decisions</h1>
+<p style="margin:0; font-size:20px; line-height:1.6; color:#B7C6DA; max-width:46ch">Live status for every machine, every stop with its reason, and one honest number for how well your lines really run.</p>
+<div style="display:flex; flex-wrap:wrap; gap:12px">
+<a href="#demo" style="background:#00DCFA; color:#001C3F; text-decoration:none; font-size:16px; font-weight:600; padding:15px 28px; border-radius:999px">See it working</a>
+<a href="#deck" style="color:#F2F7FC; text-decoration:none; font-size:16px; font-weight:500; padding:15px 24px; border-radius:999px; border:1.5px solid #3A5A84">Download the overview</a>
+</div>
+</div>
+<figure style="flex:1 1 460px; min-width:0; margin:0; position:relative; border-radius:24px; overflow:hidden; aspect-ratio:16 / 10; background:#0B2A55; box-shadow:0 40px 90px rgba(0,0,0,0.45)">
+<img src="../../public/products/mes/robot-engineer.jpg" alt="Engineer working beside an industrial robot with a digital interface" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.75">
+<div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; background:rgba(0,28,63,0.35)">
+<button type="button" aria-label="Play the product motion" style="width:84px; height:84px; border-radius:50%; border:0; background:#00DCFA; display:flex; align-items:center; justify-content:center">
+<svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="#001C3F"></path></svg>
+</button>
+<figcaption style="font-size:15px; color:#E6EEF7">[Product motion, about 60 seconds]</figcaption>
+</div>
+</figure>
+</div>
+</section>
+
+<section style="padding:104px 24px; background:#F3F7FB">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:64px; align-items:center">
+<div style="flex:1 1 460px; min-width:0; display:flex; flex-direction:column; gap:32px">
+<h2 style="margin:0; font-size:40px; font-weight:600; line-height:1.15; letter-spacing:-0.01em; color:#001C3F">Most plants run on partial visibility</h2>
+<div style="display:flex; flex-direction:column">
+<p style="margin:0; padding:20px 0; border-top:1px solid #D3DEEB; font-size:20px; line-height:1.5; color:#3B4D66">Downtime is noticed, but rarely measured.</p>
+<p style="margin:0; padding:20px 0; border-top:1px solid #D3DEEB; font-size:20px; line-height:1.5; color:#3B4D66">The reasons behind each stop live in notebooks and memory.</p>
+<p style="margin:0; padding:20px 0; border-top:1px solid #D3DEEB; border-bottom:1px solid #D3DEEB; font-size:20px; line-height:1.5; color:#3B4D66">Efficiency is debated instead of known.</p>
+</div>
+</div>
+<img src="../../public/products/mes/control-room.jpg" alt="Two engineers reviewing production dashboards on a control-room screen" style="flex:1 1 420px; min-width:0; width:100%; height:460px; object-fit:cover; border-radius:28px">
+</div>
+</section>
+
+<section style="padding:104px 24px; background:#FFFFFF">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:64px">
+<p style="margin:0; font-size:clamp(30px, 3.6vw, 48px); font-weight:300; line-height:1.25; letter-spacing:-0.01em; color:#001C3F; max-width:24ch">Omnicon MES turns machine signals into answers your team can act on.</p>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:48px 40px">
+<div style="display:flex; gap:20px; align-items:flex-start">
+<img src="../../public/brand/icons/monitor.png" alt="" style="width:64px; height:64px; flex:none">
+<div style="display:flex; flex-direction:column; gap:8px"><h3 style="margin:0; font-size:21px; font-weight:600; color:#001C3F">What is each machine doing right now?</h3><p style="margin:0; font-size:16px; line-height:1.6; color:#4A5D78">Live status: running, stopped, slow or faulted.</p></div>
+</div>
+<div style="display:flex; gap:20px; align-items:flex-start">
+<img src="../../public/brand/icons/output.png" alt="" style="width:64px; height:64px; flex:none">
+<div style="display:flex; flex-direction:column; gap:8px"><h3 style="margin:0; font-size:21px; font-weight:600; color:#001C3F">How much did we make, and how much was good?</h3><p style="margin:0; font-size:16px; line-height:1.6; color:#4A5D78">Good, scrap and rework counts by machine, line and order.</p></div>
+</div>
+<div style="display:flex; gap:20px; align-items:flex-start">
+<img src="../../public/brand/icons/search.png" alt="" style="width:64px; height:64px; flex:none">
+<div style="display:flex; flex-direction:column; gap:8px"><h3 style="margin:0; font-size:21px; font-weight:600; color:#001C3F">Why did we stop, and for how long?</h3><p style="margin:0; font-size:16px; line-height:1.6; color:#4A5D78">Every stop is recorded with its duration and its reason.</p></div>
+</div>
+<div style="display:flex; gap:20px; align-items:flex-start">
+<img src="../../public/brand/icons/efficiency.png" alt="" style="width:64px; height:64px; flex:none">
+<div style="display:flex; flex-direction:column; gap:8px"><h3 style="margin:0; font-size:21px; font-weight:600; color:#001C3F">How efficient was the shift?</h3><p style="margin:0; font-size:16px; line-height:1.6; color:#4A5D78">OEE by machine, line and plant; by hour, shift and order.</p></div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="how" style="padding:104px 24px; background:#F3F7FB">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:40px">
+<div style="display:flex; flex-direction:column; gap:16px; max-width:720px">
+<h2 style="margin:0; font-size:40px; font-weight:600; line-height:1.15; letter-spacing:-0.01em; color:#001C3F">How it works</h2>
+<p style="margin:0; font-size:18px; line-height:1.65; color:#3B4D66">Six pieces, one flow of data. Select a piece to see what it does.</p>
+</div>
+<div style="display:flex; flex-wrap:wrap; gap:12px; align-items:stretch">
+<sc-for list="{{layers}}" as="l" hint-placeholder-count="6">
+<button type="button" onClick="{{l.pick}}" aria-pressed="{{l.pressed}}" style="flex:1 1 170px; text-align:left; display:flex; flex-direction:column; gap:6px; padding:20px 22px; border-radius:18px; border:1.5px solid {{l.border}}; background:{{l.bg}}; color:{{l.fg}}">
+<span style="font-size:14px; opacity:0.8">{{l.zone}}</span>
+<span style="font-size:18px; font-weight:600">{{l.name}}</span>
+</button>
+</sc-for>
+</div>
+<div class="trace" aria-hidden="true"></div>
+<div style="display:flex; flex-wrap:wrap; gap:40px; background:#FFFFFF; border-radius:24px; padding:44px">
+<div style="flex:1 1 420px; min-width:0; display:flex; flex-direction:column; gap:14px">
+<h3 style="margin:0; font-size:28px; font-weight:600; color:#001C3F">{{active.name}}</h3>
+<p style="margin:0; font-size:18px; line-height:1.65; color:#3B4D66">{{active.detail}}</p>
+</div>
+<div style="flex:1 1 280px; min-width:0; display:flex; flex-direction:column; gap:10px; border-left:1px solid #D3DEEB; padding-left:32px">
+<p style="margin:0; font-size:14px; color:#4A5D78">Runs on</p>
+<p style="margin:0; font-size:18px; font-weight:500; color:#001C3F">{{active.tech}}</p>
+<p style="margin:16px 0 0; font-size:14px; color:#4A5D78">How often</p>
+<p style="margin:0; font-size:18px; font-weight:500; color:#001C3F">{{active.cadence}}</p>
+</div>
+</div>
+</div>
+</section>
+
+<section style="padding:104px 24px; background:#FFFFFF">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:48px">
+<h2 style="margin:0; font-size:40px; font-weight:600; line-height:1.15; letter-spacing:-0.01em; color:#001C3F; max-width:22ch">From a machine signal to a decision, in five steps</h2>
+<ol style="list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:28px">
+<li style="display:flex; flex-direction:column; gap:12px; border-top:3px solid #00DCFA; padding-top:20px"><span style="font-size:15px; font-weight:600; color:#0A58EB">Step 1</span><span style="font-size:20px; font-weight:600; color:#001C3F">Signal</span><span style="font-size:16px; line-height:1.6; color:#4A5D78">Machine 2 reports “Faulted” at 13:40.</span></li>
+<li style="display:flex; flex-direction:column; gap:12px; border-top:3px solid #2CA9F5; padding-top:20px"><span style="font-size:15px; font-weight:600; color:#0A58EB">Step 2</span><span style="font-size:20px; font-weight:600; color:#001C3F">Timeline</span><span style="font-size:16px; line-height:1.6; color:#4A5D78">Running until 13:40, faulted until 13:52.</span></li>
+<li style="display:flex; flex-direction:column; gap:12px; border-top:3px solid #3C7AF0; padding-top:20px"><span style="font-size:15px; font-weight:600; color:#0A58EB">Step 3</span><span style="font-size:20px; font-weight:600; color:#001C3F">Event</span><span style="font-size:16px; line-height:1.6; color:#4A5D78">A 12-minute stop is logged with reason “Unknown”.</span></li>
+<li style="display:flex; flex-direction:column; gap:12px; border-top:3px solid #5A5CF8; padding-top:20px"><span style="font-size:15px; font-weight:600; color:#5A2FD9">Step 4, by a person</span><span style="font-size:20px; font-weight:600; color:#001C3F">Reason</span><span style="font-size:16px; line-height:1.6; color:#4A5D78">The operator picks the real cause.</span></li>
+<li style="display:flex; flex-direction:column; gap:12px; border-top:3px solid #7543FF; padding-top:20px"><span style="font-size:15px; font-weight:600; color:#0A58EB">Step 5</span><span style="font-size:20px; font-weight:600; color:#001C3F">Decision</span><span style="font-size:16px; line-height:1.6; color:#4A5D78">OEE updates and the loss has an owner.</span></li>
+</ol>
+<p style="margin:0; font-size:22px; line-height:1.5; color:#001C3F; max-width:52ch">Machines report facts. People explain them. Nobody can turn a breakdown into a “slow run”.</p>
+</div>
+</section>
+
+<section id="demo" style="padding:104px 24px; background:#001C3F; color:#F2F7FC">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:40px">
+<div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:24px; align-items:flex-end">
+<div style="display:flex; flex-direction:column; gap:14px; max-width:640px">
+<h2 style="margin:0; font-size:40px; font-weight:600; line-height:1.15; letter-spacing:-0.01em">Try it: one shift on Line 1</h2>
+<p style="margin:0; font-size:18px; line-height:1.65; color:#B7C6DA">A simulated line with three machines. Cause a breakdown, give it a reason, and watch the numbers respond.</p>
+</div>
+<p style="margin:0; font-size:14px; color:#7F93AE">Simulated data, not connected to a PLC</p>
+</div>
+
+<div style="display:flex; flex-wrap:wrap; gap:24px">
+<div style="flex:3 1 560px; min-width:0; background:#0B2A55; border-radius:24px; padding:32px; display:flex; flex-direction:column; gap:28px">
+<div style="display:flex; flex-wrap:wrap; gap:16px; align-items:stretch">
+<sc-for list="{{machines}}" as="m" hint-placeholder-count="3">
+<div style="flex:1 1 150px; display:flex; flex-direction:column; gap:14px; background:#102F5C; border-radius:18px; padding:20px; border:2px solid {{m.ring}}">
+<svg width="100%" height="86" viewBox="0 0 160 86" aria-hidden="true"><rect x="22" y="10" width="116" height="54" rx="8" fill="#16406F"></rect><rect x="36" y="22" width="44" height="26" rx="4" fill="{{m.screen}}"></rect><circle cx="108" cy="35" r="11" fill="none" stroke="{{m.screen}}" stroke-width="4"></circle><rect x="8" y="66" width="144" height="10" rx="5" fill="#25507F"></rect></svg>
+<div style="display:flex; flex-direction:column; gap:4px">
+<span style="font-size:17px; font-weight:600">{{m.name}}</span>
+<span style="font-size:14px; color:#B7C6DA">{{m.role}}</span>
+</div>
+<span style="align-self:flex-start; font-size:14px; font-weight:600; padding:6px 12px; border-radius:999px; background:{{m.pillBg}}; color:#001C3F">{{m.status}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center">
+<sc-if value="{{noFault}}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{triggerFault}}" style="background:#FFB547; color:#001C3F; border:0; font-size:16px; font-weight:600; padding:14px 24px; border-radius:999px">Cause a breakdown on Machine 2</button>
+</sc-if>
+<sc-if value="{{fault}}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{reset}}" style="background:transparent; color:#F2F7FC; border:1.5px solid #3A5A84; font-size:16px; font-weight:500; padding:13px 22px; border-radius:999px">Reset the shift</button>
+</sc-if>
+<p style="margin:0; flex:1 1 280px; font-size:16px; line-height:1.55; color:#CFE0F0">{{message}}</p>
+</div>
+
+<div style="display:flex; flex-direction:column; gap:12px">
+<h3 style="margin:0; font-size:18px; font-weight:600">Stop events this shift</h3>
+<div style="display:flex; flex-direction:column; border-top:1px solid #23497A">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="1">
+<div style="display:flex; flex-wrap:wrap; gap:8px 24px; align-items:center; padding:14px 0; border-bottom:1px solid #23497A; font-size:16px">
+<span style="flex:0 0 96px; color:#B7C6DA">{{e.time}}</span>
+<span style="flex:1 1 140px; font-weight:500">{{e.machine}}</span>
+<span style="flex:0 0 90px; color:#B7C6DA">{{e.duration}}</span>
+<span style="flex:1 1 180px; color:{{e.reasonColor}}; font-weight:500">{{e.reason}}</span>
+<span style="flex:0 0 110px; color:#B7C6DA">{{e.kind}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+
+<sc-if value="{{askReason}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex; flex-direction:column; gap:14px; background:#102F5C; border-radius:18px; padding:24px; border:2px solid #7543FF">
+<p style="margin:0; font-size:17px; font-weight:600">You are the operator. Why did Machine 2 stop?</p>
+<div style="display:flex; flex-wrap:wrap; gap:10px">
+<sc-for list="{{reasons}}" as="r" hint-placeholder-count="3">
+<button type="button" onClick="{{r.pick}}" style="background:#F2F7FC; color:#001C3F; border:0; font-size:15px; font-weight:500; padding:12px 18px; border-radius:999px">{{r.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</div>
+
+<div style="flex:2 1 340px; min-width:0; background:#F3F7FB; color:#001C3F; border-radius:24px; padding:32px; display:flex; flex-direction:column; gap:24px">
+<div style="display:flex; flex-direction:column; gap:6px">
+<p style="margin:0; font-size:15px; color:#4A5D78">Line 1 OEE, this shift</p>
+<p style="margin:0; font-size:88px; font-weight:300; line-height:1; letter-spacing:-0.03em">{{oee}}%</p>
+</div>
+<div style="display:flex; flex-direction:column; gap:18px">
+<div style="display:flex; flex-direction:column; gap:8px">
+<div style="display:flex; justify-content:space-between; font-size:16px"><span>Availability</span><span style="font-weight:600">{{a}}%</span></div>
+<div style="height:10px; border-radius:5px; background:#D3DEEB"><div style="height:10px; border-radius:5px; background:#0A58EB; width:{{a}}%"></div></div>
+</div>
+<div style="display:flex; flex-direction:column; gap:8px">
+<div style="display:flex; justify-content:space-between; font-size:16px"><span>Performance</span><span style="font-weight:600">{{p}}%</span></div>
+<div style="height:10px; border-radius:5px; background:#D3DEEB"><div style="height:10px; border-radius:5px; background:#3530A5; width:{{p}}%"></div></div>
+</div>
+<div style="display:flex; flex-direction:column; gap:8px">
+<div style="display:flex; justify-content:space-between; font-size:16px"><span>Quality</span><span style="font-weight:600">{{q}}%</span></div>
+<div style="height:10px; border-radius:5px; background:#D3DEEB"><div style="height:10px; border-radius:5px; background:#7543FF; width:{{q}}%"></div></div>
+</div>
+</div>
+<div style="display:flex; flex-direction:column; gap:6px; border-top:1px solid #D3DEEB; padding-top:18px; font-size:15px; line-height:1.6; color:#3B4D66">
+<span>Scheduled time: 480 min</span>
+<span>Unplanned stops: {{unplanned}} min</span>
+<span>Planned stops: {{planned}} min</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="oee" style="padding:104px 24px; background:#F3F7FB">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:48px">
+<div style="display:flex; flex-direction:column; gap:16px; max-width:760px">
+<h2 style="margin:0; font-size:40px; font-weight:600; line-height:1.15; letter-spacing:-0.01em; color:#001C3F">OEE: one number for real performance</h2>
+<p style="margin:0; font-size:18px; line-height:1.65; color:#3B4D66">Overall Equipment Effectiveness multiplies three questions. 100% means only good parts, at full speed, with no unplanned stops.</p>
+</div>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:24px">
+<div style="background:#FFFFFF; border-radius:24px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<span style="font-size:64px; font-weight:300; line-height:1; color:#0A58EB">A</span>
+<h3 style="margin:0; font-size:22px; font-weight:600; color:#001C3F">Availability</h3>
+<p style="margin:0; font-size:17px; font-weight:500; color:#001C3F">Was it running when it should?</p>
+<p style="margin:0; font-size:16px; line-height:1.6; color:#4A5D78">Lost to unplanned stops: breakdowns, missing material, lost signal.</p>
+</div>
+<div style="background:#FFFFFF; border-radius:24px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<span style="font-size:64px; font-weight:300; line-height:1; color:#3530A5">P</span>
+<h3 style="margin:0; font-size:22px; font-weight:600; color:#001C3F">Performance</h3>
+<p style="margin:0; font-size:17px; font-weight:500; color:#001C3F">Did it run at ideal speed?</p>
+<p style="margin:0; font-size:16px; line-height:1.6; color:#4A5D78">Lost to slow running and short micro-stops.</p>
+</div>
+<div style="background:#FFFFFF; border-radius:24px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<span style="font-size:64px; font-weight:300; line-height:1; color:#7543FF">Q</span>
+<h3 style="margin:0; font-size:22px; font-weight:600; color:#001C3F">Quality</h3>
+<p style="margin:0; font-size:17px; font-weight:500; color:#001C3F">Were the parts good?</p>
+<p style="margin:0; font-size:16px; line-height:1.6; color:#4A5D78">Lost to scrap and rework.</p>
+</div>
+</div>
+<div style="display:flex; flex-wrap:wrap; gap:32px; align-items:center; background:#001C3F; color:#F2F7FC; border-radius:24px; padding:40px 44px">
+<p style="margin:0; flex:0 0 auto; font-size:72px; font-weight:300; line-height:1; color:#00DCFA">74%</p>
+<p style="margin:0; flex:1 1 420px; font-size:18px; line-height:1.65; color:#CFE0F0">An illustrative 8-hour shift: 90% availability × 85% performance × 97% quality. Of 480 minutes paid for, only 356 produced good parts at full speed. The other 124 minutes are the opportunity, and the MES shows where they went.</p>
+</div>
+</div>
+</section>
+
+<section style="padding:104px 24px; background:#FFFFFF">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:48px">
+<h2 style="margin:0; font-size:40px; font-weight:600; line-height:1.15; letter-spacing:-0.01em; color:#001C3F">A day in the plant</h2>
+<ol style="list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:40px">
+<li style="display:flex; flex-direction:column; gap:16px">
+<div style="display:flex; align-items:baseline; gap:14px"><span style="font-size:48px; font-weight:300; color:#0A58EB; line-height:1">1</span><h3 style="margin:0; font-size:24px; font-weight:600; color:#001C3F">Before the shift</h3></div>
+<ul style="margin:0; padding:0 0 0 20px; font-size:17px; line-height:1.8; color:#3B4D66"><li>Shifts are scheduled</li><li>Routes set product, line and ideal speed</li><li>Planned stops are registered</li><li>Orders load from an Excel template</li></ul>
+</li>
+<li style="display:flex; flex-direction:column; gap:16px">
+<div style="display:flex; align-items:baseline; gap:14px"><span style="font-size:48px; font-weight:300; color:#3530A5; line-height:1">2</span><h3 style="margin:0; font-size:24px; font-weight:600; color:#001C3F">During the shift</h3></div>
+<ul style="margin:0; padding:0 0 0 20px; font-size:17px; line-height:1.8; color:#3B4D66"><li>The operator starts an order on a line</li><li>The MES counts parts and detects stops</li><li>The operator adds each stop’s reason</li><li>OEE refreshes every minute</li></ul>
+</li>
+<li style="display:flex; flex-direction:column; gap:16px">
+<div style="display:flex; align-items:baseline; gap:14px"><span style="font-size:48px; font-weight:300; color:#7543FF; line-height:1">3</span><h3 style="margin:0; font-size:24px; font-weight:600; color:#001C3F">After the shift</h3></div>
+<ul style="margin:0; padding:0 0 0 20px; font-size:17px; line-height:1.8; color:#3B4D66"><li>Reasons can be corrected until end of day</li><li>The shift is then closed and locked</li><li>Results are ready for reporting</li></ul>
+</li>
+</ol>
+</div>
+</section>
+
+<section style="padding:104px 24px; background:#F3F7FB">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:64px">
+<div style="flex:1 1 420px; min-width:0; display:flex; flex-direction:column; gap:20px">
+<h2 style="margin:0; font-size:40px; font-weight:600; line-height:1.15; letter-spacing:-0.01em; color:#001C3F">From one machine to the whole plant</h2>
+<p style="margin:0; font-size:18px; line-height:1.65; color:#3B4D66">Results roll up the way a plant really works. A line is paced by its slowest machine, not by a simple average, so the same loss is never counted twice.</p>
+<div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:8px">
+<span style="font-size:15px; font-weight:500; color:#001C3F; background:#DCEBFB; padding:10px 18px; border-radius:999px">By hour</span>
+<span style="font-size:15px; font-weight:500; color:#001C3F; background:#DCEBFB; padding:10px 18px; border-radius:999px">By shift, live</span>
+<span style="font-size:15px; font-weight:500; color:#001C3F; background:#DCEBFB; padding:10px 18px; border-radius:999px">By production order</span>
+</div>
+</div>
+<div style="flex:1 1 420px; min-width:0; display:flex; flex-direction:column; gap:12px">
+<div style="display:flex; gap:20px; align-items:center; background:#FFFFFF; border-radius:20px; padding:24px 28px"><span style="flex:0 0 96px; font-size:20px; font-weight:600; color:#001C3F">Machine</span><span style="font-size:16px; line-height:1.55; color:#4A5D78">Where every result starts: stops, speed and counts.</span></div>
+<div style="display:flex; gap:20px; align-items:center; background:#FFFFFF; border-radius:20px; padding:24px 28px; margin-left:28px"><span style="flex:0 0 96px; font-size:20px; font-weight:600; color:#001C3F">Line</span><span style="font-size:16px; line-height:1.55; color:#4A5D78">Availability from its last machine, speed from its bottleneck.</span></div>
+<div style="display:flex; gap:20px; align-items:center; background:#001C3F; border-radius:20px; padding:24px 28px; margin-left:56px"><span style="flex:0 0 96px; font-size:20px; font-weight:600; color:#F2F7FC">Plant</span><span style="font-size:16px; line-height:1.55; color:#CFE0F0">All lines combined, weighted by their time.</span></div>
+</div>
+</div>
+</section>
+
+<section id="value" style="padding:104px 24px; background:#FFFFFF">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:56px">
+<h2 style="margin:0; font-size:40px; font-weight:600; line-height:1.15; letter-spacing:-0.01em; color:#001C3F">What leaders gain</h2>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:40px">
+<div style="display:flex; flex-direction:column; gap:14px"><img src="../../public/brand/icons/stopwatch.png" alt="" style="width:64px; height:64px"><h3 style="margin:0; font-size:21px; font-weight:600; color:#001C3F">Less unplanned downtime</h3><p style="margin:0; font-size:16px; line-height:1.6; color:#4A5D78">When every stop has a reason, the biggest losses become obvious and get fixed first.</p></div>
+<div style="display:flex; flex-direction:column; gap:14px"><img src="../../public/brand/icons/decision.png" alt="" style="width:64px; height:64px"><h3 style="margin:0; font-size:21px; font-weight:600; color:#001C3F">Faster, fact-based decisions</h3><p style="margin:0; font-size:16px; line-height:1.6; color:#4A5D78">Live OEE replaces end-of-shift estimates and spreadsheets.</p></div>
+<div style="display:flex; flex-direction:column; gap:14px"><img src="../../public/brand/icons/cost.png" alt="" style="width:64px; height:64px"><h3 style="margin:0; font-size:21px; font-weight:600; color:#001C3F">Lower cost per part</h3><p style="margin:0; font-size:16px; line-height:1.6; color:#4A5D78">More good parts from the same machines, people and hours.</p></div>
+<div style="display:flex; flex-direction:column; gap:14px"><img src="../../public/brand/icons/scale.png" alt="" style="width:64px; height:64px"><h3 style="margin:0; font-size:21px; font-weight:600; color:#001C3F">Grows with you</h3><p style="margin:0; font-size:16px; line-height:1.6; color:#4A5D78">Start with one machine, then extend to lines and plants.</p></div>
+</div>
+<div style="display:flex; flex-wrap:wrap; gap:16px 48px; border-top:1px solid #D3DEEB; padding-top:32px; font-size:16px; color:#3B4D66">
+<span><b style="color:#001C3F; font-weight:600">ISA-95</b> data model</span>
+<span><b style="color:#001C3F; font-weight:600">Rockwell</b> Logix PLCs and FactoryTalk Optix</span>
+<span><b style="color:#001C3F; font-weight:600">InfluxDB and SQL Server</b> underneath</span>
+<span><b style="color:#001C3F; font-weight:600">Full audit trail</b> on every reason change</span>
+<span><b style="color:#001C3F; font-weight:600">No ERP required</b>: orders from Excel</span>
+</div>
+</div>
+</section>
+
+<section id="deck" style="padding:88px 24px; background:#002473; color:#F2F7FC">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:32px; align-items:center; justify-content:space-between">
+<div style="display:flex; flex-direction:column; gap:12px; max-width:620px">
+<h2 style="margin:0; font-size:32px; font-weight:600">Take the overview with you</h2>
+<p style="margin:0; font-size:17px; line-height:1.6; color:#CFE0F0">The 15-slide presentation for plant and operations leaders.</p>
+</div>
+<div style="display:flex; flex-wrap:wrap; gap:12px">
+<a href="#deck" style="background:#F2F7FC; color:#001C3F; text-decoration:none; font-size:16px; font-weight:600; padding:15px 26px; border-radius:999px">Download PDF</a>
+<a href="#deck" style="color:#F2F7FC; text-decoration:none; font-size:16px; font-weight:500; padding:15px 24px; border-radius:999px; border:1.5px solid #5A7FC0">View the slides</a>
+</div>
+</div>
+</section>
+
+<footer id="contact" style="background:#001C3F; color:#B7C6DA; padding:88px 24px 48px">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:32px; align-items:flex-end">
+<div style="display:flex; flex-direction:column; gap:16px; max-width:560px">
+<h2 style="margin:0; font-size:40px; font-weight:300; line-height:1.15; color:#F2F7FC">See your plant as it really runs.</h2>
+<p style="margin:0; font-size:17px; line-height:1.6">We set up the demo with your machines and your stop reasons.</p>
+</div>
+<a href="mailto:[contact@omnicon]" style="background:#00DCFA; color:#001C3F; text-decoration:none; font-size:16px; font-weight:600; padding:16px 28px; border-radius:999px">Request a demo</a>
+</div>
+<div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; align-items:center; border-top:1px solid #1E3A5F; padding-top:28px">
+<a href="Main.dc.html" style="display:flex"><img src="../../public/brand/logo/omnicon-white.png" alt="All Omnicon products" style="height:26px; width:auto"></a>
+<p style="margin:0; font-size:14px">© 2026 Omnicon S.A.S.</p>
+</div>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":7400}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { layer: 'etl', fault: false, reason: null };
+}
+renderVals() {
+var self = this;
+var s = this.state;
+var defs = [
+{ id: 'plc', zone: 'Plant floor', name: 'PLC', tech: 'Rockwell Logix controllers', cadence: 'Continuous', detail: 'Each machine’s controller already knows whether it is running, stopped or slow, and counts every part it makes. The MES reads those signals; it does not change how the machine is programmed.' },
+{ id: 'collect', zone: 'Plant floor', name: 'Collector', tech: 'Node-RED and FactoryTalk Optix', cadence: 'Every second', detail: 'Picks up the PLC tags and publishes them with a timestamp, without extra wiring on the machines.' },
+{ id: 'influx', zone: 'Data platform', name: 'Time-series store', tech: 'InfluxDB', cadence: 'Every second', detail: 'Records every signal as it happens. It is the raw memory of the plant: what value each tag had, and when.' },
+{ id: 'etl', zone: 'Data platform', name: 'Data pipeline', tech: 'Python service', cadence: 'Every minute', detail: 'Brings new signals into the MES, translates each tag to its machine and hands the data to the database to interpret. Mapping a new tag is a configuration row, not new code.' },
+{ id: 'mes', zone: 'Data platform', name: 'MES database', tech: 'SQL Server, ISA-95 model', cadence: 'Every minute', detail: 'Where signals become facts: machine timelines, stop events, part counts, orders, shifts and OEE by machine, line and plant. All business rules live here, in one place.' },
+{ id: 'hmi', zone: 'People', name: 'Screens', tech: 'FactoryTalk Optix HMI', cadence: 'Live', detail: 'Operators see their line, start and pause orders, and add the reason for every stop. Managers see OEE by hour, shift and order.' }
+];
+var layers = defs.map(function (d) {
+var on = d.id === s.layer;
+return { zone: d.zone, name: d.name, pressed: on ? 'true' : 'false', bg: on ? '#001C3F' : '#FFFFFF', fg: on ? '#F2F7FC' : '#001C3F', border: on ? '#001C3F' : '#D3DEEB', pick: function () { self.setState({ layer: d.id }); } };
+});
+var active = defs.filter(function (d) { return d.id === s.layer; })[0] || defs[0];
+var planned = s.fault && s.reason === 'planned' ? 12 : 0;
+var unplanned = 24 + (s.fault && s.reason !== 'planned' ? 12 : 0);
+var A = (480 - planned - unplanned) / (480 - planned);
+var P = 0.85, Q = 0.97;
+var reasonLabel = { electrical: 'Electrical fault', material: 'Material shortage', planned: 'Planned changeover' };
+var events = [{ time: '10:05', machine: 'Machine 1', duration: '24 min', reason: 'Material shortage', reasonColor: '#F2F7FC', kind: 'Unplanned' }];
+if (s.fault) {
+events.push({ time: '13:40', machine: 'Machine 2', duration: '12 min', reason: s.reason ? reasonLabel[s.reason] : 'Unknown', reasonColor: s.reason ? '#F2F7FC' : '#FFB547', kind: s.reason === 'planned' ? 'Planned' : 'Unplanned' });
+}
+var m2Fault = s.fault && !s.reason;
+var machines = [
+{ name: 'Machine 1', role: 'Infeed', status: 'Running', pillBg: '#00DCFA', ring: '#1C4677', screen: '#00DCFA' },
+{ name: 'Machine 2', role: 'Bottleneck, 1.5 s per part', status: m2Fault ? 'Faulted' : 'Running', pillBg: m2Fault ? '#FFB547' : '#00DCFA', ring: m2Fault ? '#FFB547' : '#1C4677', screen: m2Fault ? '#FFB547' : '#00DCFA' },
+{ name: 'Machine 3', role: 'Last machine', status: 'Running', pillBg: '#00DCFA', ring: '#1C4677', screen: '#00DCFA' }
+];
+var message = 'The line is running. Cause a breakdown to see what the MES does with it.';
+if (s.fault && !s.reason) message = 'The PLC reported the stop. The MES logged it as Unknown and counts it as unplanned until a person explains it.';
+if (s.reason === 'electrical' || s.reason === 'material') message = 'Reason recorded. It stays an unplanned loss, so availability drops.';
+if (s.reason === 'planned') message = 'Covered by the shift plan, so it no longer counts against availability.';
+var reasons = ['electrical', 'material', 'planned'].map(function (k) { return { label: reasonLabel[k], pick: function () { self.setState({ reason: k }); } }; });
+return {
+layers: layers, active: active, machines: machines, events: events, reasons: reasons, message: message,
+fault: s.fault, noFault: !s.fault, askReason: s.fault && !s.reason,
+triggerFault: function () { self.setState({ fault: true, reason: null }); },
+reset: function () { self.setState({ fault: false, reason: null }); },
+a: (A * 100).toFixed(1), p: (P * 100).toFixed(1), q: (Q * 100).toFixed(1), oee: (A * P * Q * 100).toFixed(1),
+unplanned: unplanned, planned: planned
+};
+}
+}
+</script>
+</body>
+</html>

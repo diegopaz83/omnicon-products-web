@@ -1,0 +1,77 @@
+{
+  "slug": "mes",
+  "internal": true,
+  "title": "Omnicon MES: project status",
+  "meta": { "designVersion": "OEE design v0.5", "pilot": "L1_WC1_M1", "updated": "2026-10-15" },
+  "summary": { "nextStep": "Shifts and calendar", "openQuestions": 12, "tagsMapped": 1 },
+
+  "progress": [
+    { "code": "F1", "name": "ISA-95 data model and documentation", "detail": "Master data, history and execution schemas, four documentation volumes.", "status": "done" },
+    { "code": "F2", "name": "Machine state pipeline, pilot", "detail": "ETL v3 running every minute; stop events generated for one mapped tag.", "status": "done" },
+    { "code": "F3", "name": "Optix screens designed", "detail": "Main, lines and machines, orders, events and losses, assets.", "status": "done" },
+    { "code": "1", "name": "Shifts and calendar", "detail": "Local to UTC conversion, shift generation, non-working days, recalculation queue.", "status": "next" },
+    { "code": "2", "name": "Stop events", "detail": "Slow as a performance event, split mixed episodes, No data stops.", "status": "not-started" },
+    { "code": "3", "name": "Availability by machine", "detail": "Hourly and shift results.", "status": "not-started" },
+    { "code": "4", "name": "Planned stops", "detail": "Plans, filtered linking, time budget, locks and screen.", "status": "not-started" },
+    { "code": "5", "name": "Part counters and quality", "detail": "Counter feed, PLC validation, quality factor.", "status": "not-started" },
+    { "code": "6", "name": "Routes and orders", "detail": "Excel import, line selection, start, hold and complete; order results.", "status": "not-started" },
+    { "code": "7", "name": "Performance and machine OEE", "detail": "Ideal cycle from routes; full OEE per machine.", "status": "not-started" },
+    { "code": "8", "name": "Line and site OEE", "detail": "Roll-up rules and live results for Optix.", "status": "not-started" }
+  ],
+  "statusLabels": { "done": "Done", "next": "Next", "in-progress": "In progress", "not-started": "Not started", "blocked": "Blocked" },
+
+  "scope": {
+    "in": [
+      "Machine state timeline and stop events",
+      "Stop reasons chosen by the operator, with audit trail",
+      "Planned stops as a time budget, linked by hand",
+      "Good, scrap and rework counters",
+      "Production orders from an Excel template; start, hold, complete",
+      "Routes with ideal cycle time per machine",
+      "OEE by machine, line and site; by hour, shift and order",
+      "Optix screens for operators and managers"
+    ],
+    "out": [
+      "ERP integration",
+      "Process variables: temperature, pressure, energy",
+      "Maintenance management (work orders, spare parts)",
+      "Daylight-saving time handling",
+      "Lines with machines in parallel"
+    ],
+    "outDraft": true
+  },
+
+  "architecture": [
+    { "name": "Capture", "body": "Logix PLC tags through Optix and Node-RED into InfluxDB, bucket `Optix`." },
+    { "name": "Land", "body": "Python ETL every minute, only mapped tags, into `custom.InfluxRawPoint`." },
+    { "name": "Interpret", "body": "Stored procedures build `history.EquipmentStateEvent` and `history.ProductionEvent`." },
+    { "name": "Calculate", "body": "`usp_Oee_Calculate` writes `history.OeeMetricPeriod` by order, hour and shift." },
+    { "name": "Show", "body": "Optix reads live results through `usp_Oee_GetLive` and writes reasons back." }
+  ],
+
+  "decisions": [
+    { "id": "C3", "text": "Availability = runtime ÷ (runtime + unplanned downtime)" },
+    { "id": "C4", "text": "All downtime comes from events; PLC runtime counters only validate" },
+    { "id": "C6", "text": "Unrecorded time counts as unplanned downtime" },
+    { "id": "C8", "text": "Shifts stored in UTC; screens send and show local time" },
+    { "id": "C9", "text": "Events start as Unknown; the operator’s reason wins" },
+    { "id": "C12", "text": "A plan is a time budget; anything beyond it is unplanned" },
+    { "id": "C14", "text": "Reasons editable until end of the shift’s local day" },
+    { "id": "C18", "text": "Orders from Excel as Released; start, hold, complete in Optix" }
+  ],
+
+  "questions": [
+    { "id": "Q1", "question": "When does a data gap become a “No data” stop?", "recommendation": "After 3× the tag’s log interval", "status": "open" },
+    { "id": "Q2", "question": "Split a slow-then-faulted episode?", "recommendation": "Yes, into two events", "status": "open" },
+    { "id": "Q3", "question": "Planned reasons without a plan", "recommendation": "Allow only flagged reasons, with an optional cap", "status": "open" },
+    { "id": "Q4", "question": "Line OEE formula", "recommendation": "A of last machine × P of bottleneck × product of Q", "status": "open" },
+    { "id": "Q5", "question": "Any lines with machines in parallel?", "recommendation": "Treat all as series for now", "status": "open" },
+    { "id": "Q6", "question": "Line with no running order", "recommendation": "Default machine order and cycle per line", "status": "open" },
+    { "id": "Q7", "question": "Line machine not in the order’s route", "recommendation": "Excluded from line OEE for that order", "status": "open" },
+    { "id": "Q8", "question": "Where to log PLC validation", "recommendation": "Validation table plus ETL log line", "status": "open" },
+    { "id": "Q9", "question": "Site time zone name", "recommendation": "Windows name: SA Pacific Standard Time", "status": "open" },
+    { "id": "Q10", "question": "Link route steps to recipe steps", "recommendation": "By sequence number for now", "status": "open" },
+    { "id": "Q11", "question": "Non-working days", "recommendation": "Calendar table per site", "status": "open" },
+    { "id": "Q12", "question": "Imported order never assigned a line", "recommendation": "Stays Released; cannot start without a line", "status": "open" }
+  ]
+}

@@ -1,0 +1,174 @@
+{
+  "slug": "mes",
+  "name": "Omnicon MES",
+  "seo": {
+    "title": "Omnicon MES: from machine signals to management decisions",
+    "description": "Live machine status, every stop with its reason, and OEE by machine, line and plant. Built on ISA-95 for Rockwell plants."
+  },
+  "nav": [
+    { "label": "How it works", "href": "#how" },
+    { "label": "Live demo", "href": "#demo" },
+    { "label": "OEE", "href": "#oee" },
+    { "label": "Value", "href": "#value" }
+  ],
+  "blocks": ["hero", "problem", "questions", "architecture", "flow", "demo", "kpi", "day", "rollup", "value", "deck", "cta"],
+
+  "hero": {
+    "label": "Omnicon MES",
+    "title": "From machine signals to management decisions",
+    "subtitle": "Live status for every machine, every stop with its reason, and one honest number for how well your lines really run.",
+    "ctaPrimary": { "label": "See it working", "href": "#demo" },
+    "ctaSecondary": { "label": "Download the overview", "href": "#deck" },
+    "media": {
+      "type": "video",
+      "poster": "products/mes/robot-engineer.jpg",
+      "posterAlt": "Engineer working beside an industrial robot with a digital interface",
+      "mp4": "products/mes/motion.mp4",
+      "webm": "products/mes/motion.webm",
+      "caption": "[Product motion, about 60 seconds]",
+      "pending": true
+    },
+    "background": "brand/graphics/signal-wave-2.png"
+  },
+
+  "problem": {
+    "title": "Most plants run on partial visibility",
+    "statements": [
+      "Downtime is noticed, but rarely measured.",
+      "The reasons behind each stop live in notebooks and memory.",
+      "Efficiency is debated instead of known."
+    ],
+    "image": { "src": "products/mes/control-room.jpg", "alt": "Two engineers reviewing production dashboards on a control-room screen" }
+  },
+
+  "promise": "Omnicon MES turns machine signals into answers your team can act on.",
+  "questions": [
+    { "icon": "brand/icons/monitor.png", "title": "What is each machine doing right now?", "body": "Live status: running, stopped, slow or faulted." },
+    { "icon": "brand/icons/output.png", "title": "How much did we make, and how much was good?", "body": "Good, scrap and rework counts by machine, line and order." },
+    { "icon": "brand/icons/search.png", "title": "Why did we stop, and for how long?", "body": "Every stop is recorded with its duration and its reason." },
+    { "icon": "brand/icons/efficiency.png", "title": "How efficient was the shift?", "body": "OEE by machine, line and plant; by hour, shift and order." }
+  ],
+
+  "architecture": {
+    "title": "How it works",
+    "intro": "Six pieces, one flow of data. Select a piece to see what it does.",
+    "defaultLayer": "etl",
+    "layers": [
+      { "id": "plc", "zone": "Plant floor", "name": "PLC", "tech": "Rockwell Logix controllers", "cadence": "Continuous", "detail": "Each machine’s controller already knows whether it is running, stopped or slow, and counts every part it makes. The MES reads those signals; it does not change how the machine is programmed." },
+      { "id": "collect", "zone": "Plant floor", "name": "Collector", "tech": "Node-RED and FactoryTalk Optix", "cadence": "Every second", "detail": "Picks up the PLC tags and publishes them with a timestamp, without extra wiring on the machines." },
+      { "id": "influx", "zone": "Data platform", "name": "Time-series store", "tech": "InfluxDB", "cadence": "Every second", "detail": "Records every signal as it happens. It is the raw memory of the plant: what value each tag had, and when." },
+      { "id": "etl", "zone": "Data platform", "name": "Data pipeline", "tech": "Python service", "cadence": "Every minute", "detail": "Brings new signals into the MES, translates each tag to its machine and hands the data to the database to interpret. Mapping a new tag is a configuration row, not new code." },
+      { "id": "mes", "zone": "Data platform", "name": "MES database", "tech": "SQL Server, ISA-95 model", "cadence": "Every minute", "detail": "Where signals become facts: machine timelines, stop events, part counts, orders, shifts and OEE by machine, line and plant. All business rules live here, in one place." },
+      { "id": "hmi", "zone": "People", "name": "Screens", "tech": "FactoryTalk Optix HMI", "cadence": "Live", "detail": "Operators see their line, start and pause orders, and add the reason for every stop. Managers see OEE by hour, shift and order." }
+    ]
+  },
+
+  "flow": {
+    "title": "From a machine signal to a decision, in five steps",
+    "steps": [
+      { "label": "Step 1", "name": "Signal", "body": "Machine 2 reports “Faulted” at 13:40." },
+      { "label": "Step 2", "name": "Timeline", "body": "Running until 13:40, faulted until 13:52." },
+      { "label": "Step 3", "name": "Event", "body": "A 12-minute stop is logged with reason “Unknown”." },
+      { "label": "Step 4, by a person", "name": "Reason", "body": "The operator picks the real cause.", "human": true },
+      { "label": "Step 5", "name": "Decision", "body": "OEE updates and the loss has an owner." }
+    ],
+    "rule": "Machines report facts. People explain them. Nobody can turn a breakdown into a “slow run”."
+  },
+
+  "demo": {
+    "title": "Try it: one shift on Line 1",
+    "intro": "A simulated line with three machines. Cause a breakdown, give it a reason, and watch the numbers respond.",
+    "disclaimer": "Simulated data, not connected to a PLC",
+    "shiftMinutes": 480,
+    "performance": 0.85,
+    "quality": 0.97,
+    "machines": [
+      { "id": "m1", "name": "Machine 1", "role": "Infeed" },
+      { "id": "m2", "name": "Machine 2", "role": "Bottleneck, 1.5 s per part", "faultable": true },
+      { "id": "m3", "name": "Machine 3", "role": "Last machine" }
+    ],
+    "seedEvents": [
+      { "time": "10:05", "machine": "Machine 1", "minutes": 24, "reason": "Material shortage", "planned": false }
+    ],
+    "fault": { "machine": "Machine 2", "time": "13:40", "minutes": 12, "button": "Cause a breakdown on Machine 2", "prompt": "You are the operator. Why did Machine 2 stop?" },
+    "reasons": [
+      { "id": "electrical", "label": "Electrical fault", "planned": false },
+      { "id": "material", "label": "Material shortage", "planned": false },
+      { "id": "planned", "label": "Planned changeover", "planned": true }
+    ],
+    "messages": {
+      "idle": "The line is running. Cause a breakdown to see what the MES does with it.",
+      "unknown": "The PLC reported the stop. The MES logged it as Unknown and counts it as unplanned until a person explains it.",
+      "unplanned": "Reason recorded. It stays an unplanned loss, so availability drops.",
+      "planned": "Covered by the shift plan, so it no longer counts against availability."
+    },
+    "reset": "Reset the shift",
+    "v2": { "engine": "three@0.160.1", "reference": "design/reference/production-management-3d.html" }
+  },
+
+  "kpi": {
+    "title": "OEE: one number for real performance",
+    "intro": "Overall Equipment Effectiveness multiplies three questions. 100% means only good parts, at full speed, with no unplanned stops.",
+    "factors": [
+      { "letter": "A", "name": "Availability", "question": "Was it running when it should?", "loss": "Lost to unplanned stops: breakdowns, missing material, lost signal." },
+      { "letter": "P", "name": "Performance", "question": "Did it run at ideal speed?", "loss": "Lost to slow running and short micro-stops." },
+      { "letter": "Q", "name": "Quality", "question": "Were the parts good?", "loss": "Lost to scrap and rework." }
+    ],
+    "example": {
+      "value": "74%",
+      "body": "An illustrative 8-hour shift: 90% availability × 85% performance × 97% quality. Of 480 minutes paid for, only 356 produced good parts at full speed. The other 124 minutes are the opportunity, and the MES shows where they went."
+    }
+  },
+
+  "day": {
+    "title": "A day in the plant",
+    "phases": [
+      { "name": "Before the shift", "items": ["Shifts are scheduled", "Routes set product, line and ideal speed", "Planned stops are registered", "Orders load from an Excel template"] },
+      { "name": "During the shift", "items": ["The operator starts an order on a line", "The MES counts parts and detects stops", "The operator adds each stop’s reason", "OEE refreshes every minute"] },
+      { "name": "After the shift", "items": ["Reasons can be corrected until end of day", "The shift is then closed and locked", "Results are ready for reporting"] }
+    ]
+  },
+
+  "rollup": {
+    "title": "From one machine to the whole plant",
+    "body": "Results roll up the way a plant really works. A line is paced by its slowest machine, not by a simple average, so the same loss is never counted twice.",
+    "cuts": ["By hour", "By shift, live", "By production order"],
+    "levels": [
+      { "name": "Machine", "body": "Where every result starts: stops, speed and counts." },
+      { "name": "Line", "body": "Availability from its last machine, speed from its bottleneck." },
+      { "name": "Plant", "body": "All lines combined, weighted by their time." }
+    ]
+  },
+
+  "benefits": {
+    "title": "What leaders gain",
+    "items": [
+      { "icon": "brand/icons/stopwatch.png", "title": "Less unplanned downtime", "body": "When every stop has a reason, the biggest losses become obvious and get fixed first." },
+      { "icon": "brand/icons/decision.png", "title": "Faster, fact-based decisions", "body": "Live OEE replaces end-of-shift estimates and spreadsheets." },
+      { "icon": "brand/icons/cost.png", "title": "Lower cost per part", "body": "More good parts from the same machines, people and hours." },
+      { "icon": "brand/icons/scale.png", "title": "Grows with you", "body": "Start with one machine, then extend to lines and plants." }
+    ]
+  },
+  "foundations": [
+    { "strong": "ISA-95", "text": "data model" },
+    { "strong": "Rockwell", "text": "Logix PLCs and FactoryTalk Optix" },
+    { "strong": "InfluxDB and SQL Server", "text": "underneath" },
+    { "strong": "Full audit trail", "text": "on every reason change" },
+    { "strong": "No ERP required", "text": "orders from Excel" }
+  ],
+
+  "deck": {
+    "title": "Take the overview with you",
+    "body": "The 15-slide presentation for plant and operations leaders.",
+    "pdf": "products/mes/omnicon-mes-overview.pdf",
+    "slidesUrl": "[PUBLIC_SLIDES_URL]",
+    "pending": true
+  },
+
+  "cta": {
+    "title": "See your plant as it really runs.",
+    "body": "We set up the demo with your machines and your stop reasons.",
+    "button": "Request a demo",
+    "href": "mailto:[CONTACT_EMAIL]"
+  }
+}

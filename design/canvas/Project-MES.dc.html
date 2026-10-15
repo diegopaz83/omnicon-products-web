@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Omnicon MES project</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#F3F7FB}
+a{color:#0A58EB}a:hover{color:#002473}
+a:focus-visible,button:focus-visible{outline:3px solid #0A58EB;outline-offset:3px}
+button{font-family:inherit;cursor:pointer}
+code{font-family:inherit;font-weight:500;color:#002473;background:#E4EDF8;padding:1px 6px;border-radius:6px}
+</style>
+</helmet>
+<div style="font-family:'Poppins', Arial, sans-serif; color:#0E2440; background:#F3F7FB; min-height:100vh">
+
+<div style="background:#3530A5; color:#F2F7FC; padding:12px 24px; font-size:15px; text-align:center">Internal view. Not included in the public build.</div>
+
+<header style="background:#001C3F; color:#F2F7FC; padding:0 24px">
+<div style="max-width:1200px; margin:0 auto; padding:28px 0 56px; display:flex; flex-direction:column; gap:40px">
+<div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px">
+<a href="Main.dc.html" style="display:flex"><img src="../../public/brand/logo/omnicon-white.png" alt="All Omnicon products" style="height:28px; width:auto"></a>
+<nav aria-label="Views" style="display:flex; gap:6px; background:#0B2A55; padding:6px; border-radius:999px">
+<a href="Product-MES.dc.html" style="color:#CFE0F0; text-decoration:none; font-size:15px; padding:9px 18px; border-radius:999px">Product</a>
+<a href="Project-MES.dc.html" aria-current="page" style="color:#001C3F; background:#00DCFA; text-decoration:none; font-size:15px; font-weight:500; padding:9px 18px; border-radius:999px">Project</a>
+</nav>
+</div>
+<div style="display:flex; flex-direction:column; gap:14px">
+<h1 style="margin:0; font-size:clamp(36px, 4.4vw, 56px); font-weight:300; letter-spacing:-0.02em">Omnicon MES: project status</h1>
+<p style="margin:0; font-size:18px; color:#B7C6DA">OEE design v0.5 · Pilot machine L1_WC1_M1 · Updated 15 Oct 2026</p>
+</div>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px">
+<div style="background:#0B2A55; border-radius:18px; padding:22px 24px; display:flex; flex-direction:column; gap:6px"><span style="font-size:14px; color:#B7C6DA">Completed</span><span style="font-size:36px; font-weight:300">{{doneCount}} of {{total}}</span></div>
+<div style="background:#0B2A55; border-radius:18px; padding:22px 24px; display:flex; flex-direction:column; gap:6px"><span style="font-size:14px; color:#B7C6DA">Next step</span><span style="font-size:20px; font-weight:500">Shifts and calendar</span></div>
+<div style="background:#0B2A55; border-radius:18px; padding:22px 24px; display:flex; flex-direction:column; gap:6px"><span style="font-size:14px; color:#B7C6DA">Open questions</span><span style="font-size:36px; font-weight:300">12</span></div>
+<div style="background:#0B2A55; border-radius:18px; padding:22px 24px; display:flex; flex-direction:column; gap:6px"><span style="font-size:14px; color:#B7C6DA">Tags mapped</span><span style="font-size:36px; font-weight:300">1</span></div>
+</div>
+</div>
+</header>
+
+<main style="padding:72px 24px 96px">
+<div style="max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:72px">
+
+<section style="display:flex; flex-direction:column; gap:28px">
+<div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:16px">
+<h2 style="margin:0; font-size:32px; font-weight:600; color:#001C3F">Progress</h2>
+<div style="display:flex; gap:8px; flex-wrap:wrap">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="3">
+<button type="button" onClick="{{f.pick}}" aria-pressed="{{f.pressed}}" style="font-size:15px; font-weight:500; padding:9px 16px; border-radius:999px; border:1.5px solid {{f.border}}; background:{{f.bg}}; color:{{f.fg}}">{{f.label}}</button>
+</sc-for>
+</div>
+</div>
+<div style="height:12px; border-radius:6px; background:#D3DEEB; overflow:hidden"><div style="height:12px; background:linear-gradient(90deg,#00DCFA,#7543FF); width:{{pct}}%"></div></div>
+<ol style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; background:#FFFFFF; border-radius:24px; overflow:hidden">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="11">
+<li style="display:flex; flex-wrap:wrap; gap:8px 24px; align-items:center; padding:20px 28px; border-bottom:1px solid #E3EAF3">
+<span style="flex:0 0 56px; font-size:15px; color:#4A5D78">{{it.code}}</span>
+<span style="flex:1 1 260px; display:flex; flex-direction:column; gap:4px"><span style="font-size:17px; font-weight:600; color:#001C3F">{{it.name}}</span><span style="font-size:15px; line-height:1.5; color:#4A5D78">{{it.detail}}</span></span>
+<span style="flex:0 0 auto; font-size:14px; font-weight:600; padding:6px 14px; border-radius:999px; background:{{it.pillBg}}; color:{{it.pillFg}}">{{it.status}}</span>
+</li>
+</sc-for>
+</ol>
+</section>
+
+<section style="display:flex; flex-wrap:wrap; gap:32px">
+<div style="flex:1 1 440px; min-width:0; display:flex; flex-direction:column; gap:20px">
+<h2 style="margin:0; font-size:32px; font-weight:600; color:#001C3F">In scope</h2>
+<ul style="margin:0; padding:28px 28px 28px 48px; background:#FFFFFF; border-radius:24px; font-size:16px; line-height:1.9; color:#3B4D66">
+<li>Machine state timeline and stop events</li>
+<li>Stop reasons chosen by the operator, with audit trail</li>
+<li>Planned stops as a time budget, linked by hand</li>
+<li>Good, scrap and rework counters</li>
+<li>Production orders from an Excel template; start, hold, complete</li>
+<li>Routes with ideal cycle time per machine</li>
+<li>OEE by machine, line and site; by hour, shift and order</li>
+<li>Optix screens for operators and managers</li>
+</ul>
+</div>
+<div style="flex:1 1 440px; min-width:0; display:flex; flex-direction:column; gap:20px">
+<h2 style="margin:0; font-size:32px; font-weight:600; color:#001C3F">Out of scope <span style="font-size:16px; font-weight:400; color:#4A5D78">[draft, confirm]</span></h2>
+<ul style="margin:0; padding:28px 28px 28px 48px; background:#FFFFFF; border-radius:24px; font-size:16px; line-height:1.9; color:#3B4D66">
+<li>ERP integration</li>
+<li>Process variables: temperature, pressure, energy</li>
+<li>Maintenance management (work orders, spare parts)</li>
+<li>Daylight-saving time handling</li>
+<li>Lines with machines in parallel</li>
+</ul>
+</div>
+</section>
+
+<section style="display:flex; flex-direction:column; gap:24px">
+<h2 style="margin:0; font-size:32px; font-weight:600; color:#001C3F">Technical architecture</h2>
+<ol style="list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px">
+<li style="background:#FFFFFF; border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:10px; border-top:4px solid #00DCFA"><span style="font-size:17px; font-weight:600; color:#001C3F">1. Capture</span><span style="font-size:15px; line-height:1.6; color:#4A5D78">Logix PLC tags through Optix and Node-RED into InfluxDB, bucket <code>Optix</code>.</span></li>
+<li style="background:#FFFFFF; border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:10px; border-top:4px solid #2CA9F5"><span style="font-size:17px; font-weight:600; color:#001C3F">2. Land</span><span style="font-size:15px; line-height:1.6; color:#4A5D78">Python ETL every minute, only mapped tags, into <code>custom.InfluxRawPoint</code>.</span></li>
+<li style="background:#FFFFFF; border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:10px; border-top:4px solid #3C7AF0"><span style="font-size:17px; font-weight:600; color:#001C3F">3. Interpret</span><span style="font-size:15px; line-height:1.6; color:#4A5D78">Stored procedures build <code>history.EquipmentStateEvent</code> and <code>history.ProductionEvent</code>.</span></li>
+<li style="background:#FFFFFF; border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:10px; border-top:4px solid #5A5CF8"><span style="font-size:17px; font-weight:600; color:#001C3F">4. Calculate</span><span style="font-size:15px; line-height:1.6; color:#4A5D78"><code>usp_Oee_Calculate</code> writes <code>history.OeeMetricPeriod</code> by order, hour and shift.</span></li>
+<li style="background:#FFFFFF; border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:10px; border-top:4px solid #7543FF"><span style="font-size:17px; font-weight:600; color:#001C3F">5. Show</span><span style="font-size:15px; line-height:1.6; color:#4A5D78">Optix reads live results through <code>usp_Oee_GetLive</code> and writes reasons back.</span></li>
+</ol>
+</section>
+
+<section style="display:flex; flex-direction:column; gap:24px">
+<h2 style="margin:0; font-size:32px; font-weight:600; color:#001C3F">Key decisions</h2>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:0 40px; background:#FFFFFF; border-radius:24px; padding:12px 32px">
+<p style="margin:0; padding:16px 0; border-bottom:1px solid #E3EAF3; font-size:15px; line-height:1.6; color:#3B4D66"><b style="color:#001C3F">C3</b> Availability = runtime ÷ (runtime + unplanned downtime)</p>
+<p style="margin:0; padding:16px 0; border-bottom:1px solid #E3EAF3; font-size:15px; line-height:1.6; color:#3B4D66"><b style="color:#001C3F">C4</b> All downtime comes from events; PLC runtime counters only validate</p>
+<p style="margin:0; padding:16px 0; border-bottom:1px solid #E3EAF3; font-size:15px; line-height:1.6; color:#3B4D66"><b style="color:#001C3F">C6</b> Unrecorded time counts as unplanned downtime</p>
+<p style="margin:0; padding:16px 0; border-bottom:1px solid #E3EAF3; font-size:15px; line-height:1.6; color:#3B4D66"><b style="color:#001C3F">C8</b> Shifts stored in UTC; screens send and show local time</p>
+<p style="margin:0; padding:16px 0; border-bottom:1px solid #E3EAF3; font-size:15px; line-height:1.6; color:#3B4D66"><b style="color:#001C3F">C9</b> Events start as Unknown; the operator’s reason wins</p>
+<p style="margin:0; padding:16px 0; border-bottom:1px solid #E3EAF3; font-size:15px; line-height:1.6; color:#3B4D66"><b style="color:#001C3F">C12</b> A plan is a time budget; anything beyond it is unplanned</p>
+<p style="margin:0; padding:16px 0; border-bottom:1px solid #E3EAF3; font-size:15px; line-height:1.6; color:#3B4D66"><b style="color:#001C3F">C14</b> Reasons editable until end of the shift’s local day</p>
+<p style="margin:0; padding:16px 0; border-bottom:1px solid #E3EAF3; font-size:15px; line-height:1.6; color:#3B4D66"><b style="color:#001C3F">C18</b> Orders from Excel as Released; start, hold, complete in Optix</p>
+</div>
+</section>
+
+<section style="display:flex; flex-direction:column; gap:24px">
+<h2 style="margin:0; font-size:32px; font-weight:600; color:#001C3F">Open questions</h2>
+<div style="overflow-x:auto; background:#FFFFFF; border-radius:24px">
+<table style="width:100%; min-width:760px; border-collapse:collapse; font-size:15px; line-height:1.5; color:#3B4D66">
+<thead><tr style="text-align:left; color:#001C3F"><th style="padding:18px 24px; border-bottom:2px solid #D3DEEB; width:64px">#</th><th style="padding:18px 24px; border-bottom:2px solid #D3DEEB">Question</th><th style="padding:18px 24px; border-bottom:2px solid #D3DEEB">Recommendation</th></tr></thead>
+<tbody>
+<tr><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Q1</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">When does a data gap become a “No data” stop?</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">After 3× the tag’s log interval</td></tr>
+<tr><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Q2</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Split a slow-then-faulted episode?</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Yes, into two events</td></tr>
+<tr><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Q3</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Planned reasons without a plan</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Allow only flagged reasons, with an optional cap</td></tr>
+<tr><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Q4</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Line OEE formula</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">A of last machine × P of bottleneck × product of Q</td></tr>
+<tr><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Q5</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Any lines with machines in parallel?</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Treat all as series for now</td></tr>
+<tr><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Q6</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Line with no running order</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Default machine order and cycle per line</td></tr>
+<tr><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Q7</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Line machine not in the order’s route</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Excluded from line OEE for that order</td></tr>
+<tr><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Q8</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Where to log PLC validation</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Validation table plus ETL log line</td></tr>
+<tr><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Q9</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Site time zone name</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Windows name: SA Pacific Standard Time</td></tr>
+<tr><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Q10</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Link route steps to recipe steps</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">By sequence number for now</td></tr>
+<tr><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Q11</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Non-working days</td><td style="padding:14px 24px; border-bottom:1px solid #E3EAF3">Calendar table per site</td></tr>
+<tr><td style="padding:14px 24px">Q12</td><td style="padding:14px 24px">Imported order never assigned a line</td><td style="padding:14px 24px">Stays Released; cannot start without a line</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3600}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { filter: 'all' };
+}
+renderVals() {
+var self = this;
+var all = [
+{ code: 'F1', name: 'ISA-95 data model and documentation', detail: 'Master data, history and execution schemas, four documentation volumes.', status: 'Done' },
+{ code: 'F2', name: 'Machine state pipeline, pilot', detail: 'ETL v3 running every minute; stop events generated for one mapped tag.', status: 'Done' },
+{ code: 'F3', name: 'Optix screens designed', detail: 'Main, lines and machines, orders, events and losses, assets.', status: 'Done' },
+{ code: '1', name: 'Shifts and calendar', detail: 'Local to UTC conversion, shift generation, non-working days, recalculation queue.', status: 'Next' },
+{ code: '2', name: 'Stop events', detail: 'Slow as a performance event, split mixed episodes, No data stops.', status: 'Not started' },
+{ code: '3', name: 'Availability by machine', detail: 'Hourly and shift results.', status: 'Not started' },
+{ code: '4', name: 'Planned stops', detail: 'Plans, filtered linking, time budget, locks and screen.', status: 'Not started' },
+{ code: '5', name: 'Part counters and quality', detail: 'Counter feed, PLC validation, quality factor.', status: 'Not started' },
+{ code: '6', name: 'Routes and orders', detail: 'Excel import, line selection, start, hold and complete; order results.', status: 'Not started' },
+{ code: '7', name: 'Performance and machine OEE', detail: 'Ideal cycle from routes; full OEE per machine.', status: 'Not started' },
+{ code: '8', name: 'Line and site OEE', detail: 'Roll-up rules and live results for Optix.', status: 'Not started' }
+];
+var colors = { 'Done': ['#C8F5E8', '#00513F'], 'Next': ['#DCEBFB', '#002473'], 'Not started': ['#E9EDF3', '#3B4D66'] };
+var f = this.state.filter;
+var items = all.filter(function (i) { return f === 'all' || (f === 'done' ? i.status === 'Done' : i.status !== 'Done'); }).map(function (i) {
+return { code: i.code, name: i.name, detail: i.detail, status: i.status, pillBg: colors[i.status][0], pillFg: colors[i.status][1] };
+});
+var done = all.filter(function (i) { return i.status === 'Done'; }).length;
+var filters = [['all', 'All'], ['done', 'Done'], ['open', 'Pending']].map(function (p) {
+var on = p[0] === f;
+return { label: p[1], pressed: on ? 'true' : 'false', bg: on ? '#001C3F' : '#FFFFFF', fg: on ? '#F2F7FC' : '#001C3F', border: on ? '#001C3F' : '#D3DEEB', pick: function () { self.setState({ filter: p[0] }); } };
+});
+return { items: items, filters: filters, doneCount: done, total: all.length, pct: Math.round(done / all.length * 100) };
+}
+}
+</script>
+</body>
+</html>
