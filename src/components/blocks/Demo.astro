@@ -2,6 +2,7 @@
 import { getSite } from '../../lib/data';
 import { fill } from '../../lib/text';
 import { INITIAL_STATE, computeMetrics, machineStatus, messageKey } from '../../lib/demo';
+import Twin from '../Twin.astro';
 import type { Product } from '../../lib/schema';
 
 interface Props {
@@ -26,6 +27,10 @@ const config = demo ? { demo, ui: ui.demo } : null;
         </div>
         <p class="disclaimer">{demo.disclaimer}</p>
       </header>
+
+      {demo.twin && (
+        <Twin title={ui.twin.title} src={demo.twin.src} enlarge={ui.twin.enlarge} restore={ui.twin.restore} />
+      )}
 
       <div class="body">
         <div class="sim">

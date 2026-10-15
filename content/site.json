@@ -71,6 +71,11 @@
     "howOften": "How often",
     "downloadPdf": "Download PDF",
     "viewSlides": "View the slides",
+    "twin": {
+      "title": "Line 1 digital twin, 3D view",
+      "enlarge": "Enlarge view",
+      "restore": "Back to normal view"
+    },
     "demo": {
       "lineOee": "Line 1 OEE, this shift",
       "availability": "Availability",

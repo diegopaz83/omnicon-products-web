@@ -103,7 +103,8 @@
       "planned": "Covered by the shift plan, so it no longer counts against availability."
     },
     "reset": "Reset the shift",
-    "v2": { "engine": "three@0.160.1", "reference": "design/reference/production-management-3d.html" }
+    "v2": { "engine": "three@0.160.1", "reference": "design/reference/production-management-3d.html" },
+    "twin": { "src": "demo/mes-twin.html" }
   },
 
   "kpi": {

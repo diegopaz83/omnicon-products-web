@@ -22,3 +22,6 @@ Implementation choices where SPEC.md is silent or ambiguous. Newest at the botto
 | D16 | Meta strings | Project meta uses commas, not middle dots | SPEC §3 avoids middle-dot meta strings |
 | D17 | Tables | The open-questions table scrolls inside its own wrapper on phones | Keeps the page itself free of horizontal scroll at 360 px |
 | D18 | Demo markup | The demo block renders its initial state on the server; the client script takes over in the next step | Shares `src/lib/demo.ts` between server and client |
+| D19 | 3D twin | `public/demo/mes-twin.html` is the approved 3D file, embedded unchanged in an iframe with lazy load; only the logo is a relative path. Enlarge fills the screen; Restore or Escape returns it | Owner request for the 3D visual now; SPEC §6 still lists 3D as v2 |
+| D20 | Twin copy | The embedded file is Spanish and holds its copy in the HTML, which breaks the English-only and content-only rules. Porting it to `content/` is pending | Kept as-is until the owner confirms the port |
+| D21 | Twin scope | The embedded file still shows tank temperature, pressure and energy, which SPEC §6 says to drop | Owner's file, owner's call; flagged for the port |
