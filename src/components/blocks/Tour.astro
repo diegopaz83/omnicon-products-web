@@ -1,0 +1,111 @@
+---
+import { url } from '../../lib/paths';
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  product: Product;
+}
+
+const { tour } = Astro.props.product;
+---
+{tour && (
+  <section id="how" class="section tour">
+    <div class="container">
+      <div class="intro">
+        <h2>{tour.title}</h2>
+        <p>{tour.intro}</p>
+      </div>
+      <figure class="frame">
+        <img src={url(tour.image.src)} alt={tour.image.alt} width="960" height="600" loading="lazy" />
+      </figure>
+      <ol class="points">
+        {tour.points.map((point) => (
+          <li class="point">
+            <h3>{point.title}</h3>
+            <p>{point.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+)}
+
+<style>
+  .tour {
+    background: var(--white);
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 720px;
+  }
+
+  h2 {
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .intro p {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--body);
+  }
+
+  .frame {
+    margin: 0;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--line);
+    box-shadow: 0 30px 80px rgba(0, 28, 63, 0.12);
+    background: var(--night);
+  }
+
+  .frame img {
+    width: 100%;
+    height: auto;
+  }
+
+  .points {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    gap: 28px 32px;
+    list-style: none;
+  }
+
+  .point {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 3px solid var(--action);
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .point p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  @media (max-width: 760px) {
+    h2 {
+      font-size: 32px;
+    }
+  }
+</style>

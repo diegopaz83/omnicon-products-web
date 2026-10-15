@@ -59,10 +59,11 @@ Each product page is an ordered list of blocks declared in its `product.json`. A
 | Hero | `Hero.astro` | `hero` | Title, subtitle, CTAs, motion video (poster + mp4/webm) |
 | Problem | `Problem.astro` | `problem` | 3 statements + photo |
 | Promise + Questions | `Questions.astro` | `promise`, `questions` | One sentence + 4 business questions with icons |
-| Architecture explorer | `Architecture.astro` (island) | `architecture` | 6 selectable layers with detail panel |
+| How it works (product tour) | `Tour.astro` | `tour` | Real product screens (GIF) with a short narrative per screen |
 | Flow | `Flow.astro` | `flow` | 5 steps signal → decision; step 4 is human input |
-| Live demo | `Demo*.astro` (island) | `demo` | Interactive simulation (§6) |
+| Concept (demo) | `Demo.astro` (island) | `demo` | Conceptual 3D line + OEE HUD, interactive (§6) |
 | KPI explainer | `Kpi.astro` | `kpi` | OEE = A × P × Q + worked example |
+| Under the hood | `Architecture.astro` (island) | `architecture` | 6 selectable layers with detail panel. Stays on the product page |
 | Day in the plant | `Timeline.astro` | `day` | Before / During / After |
 | Roll-up | `Rollup.astro` | `rollup` | Machine → Line → Plant + time cuts |
 | Value | `Value.astro` | `benefits`, `foundations` | 4 benefits + foundations strip |
@@ -85,9 +86,11 @@ Rules:
 - Known limitation (accepted): repo is public, so `content/**/project.json` is readable on GitHub. When that matters: move internal JSON to a private repo or upgrade plan.
 - Optional later: password-encrypt Project pages (StatiCrypt) for an internal deploy.
 
-## 6. Live demo (MES)
+## 6. Concept demo (MES)
 
-v1 (must): the interactive 2D simulation from the approved canvas.
+Renamed from "Live demo" (D26). It is a concept of a shift on one line, not a live view. v1 (must): the interactive simulation, with the 3D line as its visual.
+- Order on the page: How it works (product tour) → Flow → Concept demo → KPI → Under the hood.
+- Machine 1 = infeed, Machine 2 = filler (bottleneck), Machine 3 = capper; a line tower light shows the state.
 - Line 1 with 3 machines (infeed, bottleneck 1.5 s/part, last machine).
 - Shift: 480 min scheduled. Seed event: Machine 1, 10:05, 24 min, Material shortage, unplanned.
 - "Cause a breakdown on Machine 2" → Machine 2 Faulted; event 13:40, 12 min, reason Unknown (counted unplanned).

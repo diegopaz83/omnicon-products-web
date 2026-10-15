@@ -7,11 +7,11 @@
   },
   "nav": [
     { "label": "How it works", "href": "#how" },
-    { "label": "Live demo", "href": "#demo" },
+    { "label": "Concept", "href": "#demo" },
     { "label": "OEE", "href": "#oee" },
     { "label": "Value", "href": "#value" }
   ],
-  "blocks": ["hero", "problem", "questions", "architecture", "flow", "demo", "kpi", "day", "rollup", "value", "deck", "cta"],
+  "blocks": ["hero", "problem", "questions", "tour", "flow", "demo", "kpi", "architecture", "day", "rollup", "value", "deck", "cta"],
 
   "hero": {
     "label": "Omnicon MES",
@@ -50,7 +50,7 @@
   ],
 
   "architecture": {
-    "title": "How it works",
+    "title": "Under the hood",
     "intro": "Six pieces, one flow of data. Select a piece to see what it does.",
     "defaultLayer": "etl",
     "layers": [
@@ -60,6 +60,19 @@
       { "id": "etl", "zone": "Data platform", "name": "Data pipeline", "tech": "Python service", "cadence": "Every minute", "detail": "Brings new signals into the MES, translates each tag to its machine and hands the data to the database to interpret. Mapping a new tag is a configuration row, not new code." },
       { "id": "mes", "zone": "Data platform", "name": "MES database", "tech": "SQL Server, ISA-95 model", "cadence": "Every minute", "detail": "Where signals become facts: machine timelines, stop events, part counts, orders, shifts and OEE by machine, line and plant. All business rules live here, in one place." },
       { "id": "hmi", "zone": "People", "name": "Screens", "tech": "FactoryTalk Optix HMI", "cadence": "Live", "detail": "Operators see their line, start and pause orders, and add the reason for every stop. Managers see OEE by hour, shift and order." }
+    ]
+  },
+
+  "tour": {
+    "title": "How it works",
+    "intro": "Omnicon MES runs on the signals the plant already produces. These are the screens operators and managers use every shift.",
+    "image": { "src": "products/mes/product-tour.gif", "alt": "Omnicon MES screens: overview, lines and machines, orders, events and losses, and settings" },
+    "points": [
+      { "title": "Overview", "body": "Totals, OEE against target, and the state of every line in one view." },
+      { "title": "Lines & Machines", "body": "Each line and its machines, with output per hour and the stops that hold them back." },
+      { "title": "Orders", "body": "Production orders against plan, with priority and progress." },
+      { "title": "Events & Losses", "body": "Every stop with its duration and reason, ranked by its impact on OEE." },
+      { "title": "Settings", "body": "Users, order loading, and the downtime reasons operators choose from." }
     ]
   },
 
@@ -76,8 +89,8 @@
   },
 
   "demo": {
-    "title": "Try it: one shift on Line 1",
-    "intro": "A simulated line with three machines. Cause a breakdown, give it a reason, and watch the numbers respond.",
+    "title": "From a stop to a decision",
+    "intro": "A concept of one shift on a line: a stop happens, the operator explains it, and OEE responds. Three machines, simulated data.",
     "disclaimer": "Simulated data, not connected to a PLC",
     "shiftMinutes": 480,
     "performance": 0.85,

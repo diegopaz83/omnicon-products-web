@@ -5,6 +5,7 @@ export const BLOCK_NAMES = [
   'hero',
   'problem',
   'questions',
+  'tour',
   'architecture',
   'flow',
   'demo',
@@ -21,6 +22,7 @@ const BLOCK_DATA: Record<(typeof BLOCK_NAMES)[number], string[]> = {
   hero: ['hero'],
   problem: ['problem'],
   questions: ['promise', 'questions'],
+  tour: ['tour'],
   architecture: ['architecture'],
   flow: ['flow'],
   demo: ['demo'],
@@ -146,6 +148,13 @@ const HeroSchema = z.strictObject({
   background: text,
 });
 
+const TourSchema = z.strictObject({
+  title: text,
+  intro: text,
+  image: asset,
+  points: z.array(z.strictObject({ title: text, body: text })).min(1),
+});
+
 const ArchitectureSchema = z
   .strictObject({
     title: text,
@@ -204,6 +213,7 @@ export const ProductSchema = z
     questions: z
       .array(z.strictObject({ icon: text, title: text, body: text }))
       .optional(),
+    tour: TourSchema.optional(),
     architecture: ArchitectureSchema.optional(),
     flow: z
       .strictObject({
