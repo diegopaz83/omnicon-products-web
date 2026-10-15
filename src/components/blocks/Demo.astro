@@ -89,17 +89,17 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
 
             <div class="events">
               <h3>{ui.demo.events}</h3>
-              <div class="rows" data-events>
+              <ul class="chips" data-events>
                 {demo.seedEvents.map((event) => (
-                  <div class="ev">
-                    <span class="ev-time">{event.time}</span>
-                    <span class="ev-machine">{event.machine}</span>
-                    <span class="ev-minutes">{fill(ui.demo.minutes, { minutes: event.minutes })}</span>
-                    <span class="ev-reason">{event.reason}</span>
-                    <span class="ev-kind">{event.planned ? ui.demo.planned : ui.demo.unplanned}</span>
-                  </div>
+                  <li class="chip">
+                    <span class="chip-time">{event.time}</span>
+                    <span class="chip-machine">{event.machine}</span>
+                    <span>{fill(ui.demo.minutes, { minutes: event.minutes })}</span>
+                    <span class="chip-reason">{event.reason}</span>
+                    <span class="chip-kind">{event.planned ? ui.demo.planned : ui.demo.unplanned}</span>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           </div>
         </div>
@@ -220,13 +220,13 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
 
       container.replaceChildren(
         ...rows.map((row) => {
-          const line = el('div', 'ev', '');
+          const line = el('li', 'chip', '');
           line.append(
-            el('span', 'ev-time', row.time),
-            el('span', 'ev-machine', row.machine),
-            el('span', 'ev-minutes', fill(ui.minutes, { minutes: row.minutes })),
-            el('span', row.unknown ? 'ev-reason ev-unknown' : 'ev-reason', row.reason),
-            el('span', 'ev-kind', row.planned ? ui.planned : ui.unplanned),
+            el('span', 'chip-time', row.time),
+            el('span', 'chip-machine', row.machine),
+            el('span', '', fill(ui.minutes, { minutes: row.minutes })),
+            el('span', row.unknown ? 'chip-reason chip-unknown' : 'chip-reason', row.reason),
+            el('span', 'chip-kind', row.planned ? ui.planned : ui.unplanned),
           );
           return line;
         }),
@@ -362,15 +362,17 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
     justify-content: flex-end;
   }
 
-  .toggle {
+  .toggle,
+  .controls .btn-ghost-dark {
     min-height: 40px;
     padding: 10px 18px;
-    background: rgba(4, 23, 43, 0.9);
+    background: #0b2742;
+    border-color: #3a5a84;
   }
 
   .view {
     position: relative;
-    height: 640px;
+    height: 760px;
     overflow: hidden;
     border-radius: var(--radius-card);
     background: #071a2d;
@@ -493,10 +495,8 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    max-height: 42%;
-    overflow-y: auto;
     padding: 16px 20px;
-    background: rgba(4, 23, 43, 0.9);
+    background: rgba(4, 23, 43, 0.97);
     border: 1px solid #285476;
     border-radius: 14px;
     color: var(--on-dark);
@@ -548,51 +548,38 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
     font-weight: 600;
   }
 
-  .rows {
+  :global(.chips) {
     display: flex;
-    flex-direction: column;
-    border-top: 1px solid var(--line-dark);
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
 
-  .ev {
+  :global(.chip) {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 4px 16px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--line-dark);
-    font-size: 14px;
+    gap: 4px 10px;
+    padding: 8px 14px;
+    border: 1px solid var(--line-dark);
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    color: var(--on-dark);
   }
 
-  .ev-time,
-  .ev-minutes,
-  .ev-kind {
+  :global(.chip-time),
+  :global(.chip-kind) {
     color: var(--on-dark-muted);
   }
 
-  .ev-time {
-    flex: 0 0 60px;
+  :global(.chip-machine),
+  :global(.chip-reason) {
+    font-weight: 600;
   }
 
-  .ev-machine {
-    flex: 1 1 110px;
-    font-weight: 500;
-  }
-
-  .ev-minutes {
-    flex: 0 0 64px;
-  }
-
-  .ev-reason {
-    flex: 1 1 150px;
-    font-weight: 500;
-  }
-
-  .ev-kind {
-    flex: 0 0 80px;
-  }
-
-  .ev-unknown {
+  :global(.chip-unknown) {
     color: var(--fault);
   }
 
