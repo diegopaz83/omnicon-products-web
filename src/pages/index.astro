@@ -1,9 +1,13 @@
 ---
-import { getSite, getProduct, getProject } from '../lib/data';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getSite } from '../lib/data';
+import { url } from '../lib/paths';
 const site = getSite();
-const mes = getProduct('mes');
-const project = getProject('mes');
 ---
-<html lang="en"><head><meta charset="utf-8"><title>Omnicon Products</title></head><body>
-<p>{site.products.length} {mes.blocks.length} {project?.progress.length ?? 'none'}</p>
-</body></html>
+<BaseLayout title={site.name} description={site.hero.subtitle}>
+  <Header brandHref={url()} brandAria={site.ui.homeAria} logo={{ src: site.logo.light, alt: site.logo.alt }} navAria={site.ui.mainNavAria} nav={site.nav} cta={{ label: site.ui.talkToUs, href: '#contact' }} />
+  <main id="main" class="section"><h1>{site.hero.title}</h1></main>
+  <Footer homeHref={url()} homeAria={site.ui.homeAria} logo={{ src: site.logo.light, alt: site.logo.alt }} legal={site.footer.legal} />
+</BaseLayout>

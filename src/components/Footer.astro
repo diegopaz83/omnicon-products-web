@@ -1,0 +1,49 @@
+---
+import { url } from '../lib/paths';
+
+interface Props {
+  homeHref: string;
+  homeAria: string;
+  logo: { src: string; alt: string };
+  legal: string;
+}
+
+const { homeHref, homeAria, logo, legal } = Astro.props;
+---
+<footer class="site-footer on-dark">
+  <div class="container">
+    <div class="row">
+      <a href={homeHref} aria-label={homeAria}>
+        <img src={url(logo.src)} alt={logo.alt} height="28" />
+      </a>
+      <p class="legal">{legal}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--night);
+    color: var(--on-dark-muted);
+    padding: 28px 0 48px;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-top: 1px solid var(--line-dark-soft);
+    padding-top: 28px;
+  }
+
+  .row img {
+    height: 28px;
+    width: auto;
+  }
+
+  .legal {
+    font-size: 14px;
+  }
+</style>

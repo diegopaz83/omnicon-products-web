@@ -1,0 +1,92 @@
+---
+import { url } from '../lib/paths';
+
+interface Props {
+  brandHref: string;
+  brandAria: string;
+  logo: { src: string; alt: string };
+  navAria: string;
+  nav: { label: string; href: string }[];
+  cta?: { label: string; href: string };
+  // Adds the bottom divider used on product pages
+  divided?: boolean;
+}
+
+const { brandHref, brandAria, logo, navAria, nav, cta, divided = false } = Astro.props;
+---
+<header class:list={['site-header', 'on-dark', { divided }]}>
+  <div class="container bar">
+    <a class="brand" href={brandHref} aria-label={brandAria}>
+      <img src={url(logo.src)} alt={logo.alt} height="34" />
+    </a>
+    <nav class="nav" aria-label={navAria}>
+      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+      {cta && <a class="btn btn-signal cta" href={cta.href}>{cta.label}</a>}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: var(--night);
+  }
+
+  .site-header.divided {
+    border-bottom: 1px solid var(--line-dark-soft);
+  }
+
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 16px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+  }
+
+  .brand img {
+    height: 34px;
+    width: auto;
+  }
+
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .nav a {
+    padding: 10px 12px;
+    font-size: 15px;
+    color: #e6eef7;
+    text-decoration: none;
+  }
+
+  .nav a:hover {
+    color: var(--signal);
+  }
+
+  .nav .cta {
+    margin-left: 8px;
+    padding: 10px 18px;
+    min-height: 0;
+    font-size: 15px;
+  }
+
+  .nav .cta:hover {
+    color: var(--night);
+  }
+
+  @media (max-width: 480px) {
+    .brand img {
+      height: 28px;
+    }
+  }
+</style>
