@@ -62,7 +62,6 @@ export function mountTwin(container: HTMLElement): Twin | null {
     new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: intensity, roughness: 0.24 });
   const lit = glow('#00dcfa', 1.5);
   const green = glow('#37edab', 1.7);
-  const amber = glow('#ffb547', 2.2);
   const purple = glow('#7543ff', 1.2);
 
   const root = new THREE.Group();
@@ -155,7 +154,14 @@ export function mountTwin(container: HTMLElement): Twin | null {
       box(0.14, 1, 0.15, steel, x, 0.51, z, conveyor);
       box(0.29, 0.1, 0.28, dark, x, 0.06, z, conveyor);
     }
-  const lampM1 = cyl(0.14, 0.2, green, -11.4, 1.9, 0, conveyor, 12);
+  // Line beacon at the infeed: green while running, blinking amber on a stop
+  cyl(0.2, 0.3, dark, -11.2, 1.8, 0.9, root, 16);
+  const beaconRunning = glow('#37edab', 1.4);
+  const beaconFault = glow('#ffb547', 2.6);
+  const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 12), beaconRunning);
+  beacon.position.set(-11.2, 2.25, 0.9);
+  beacon.castShadow = true;
+  root.add(beacon);
 
   // Tank and piping
   const tank = new THREE.Group();
@@ -187,7 +193,6 @@ export function mountTwin(container: HTMLElement): Twin | null {
   for (const x of [-2.4, 2.4]) for (const z of [-1.84, 1.84]) box(0.07, 2.7, 0.06, glass, x, 3.1, z, filler);
   for (const z of [-1.8, 1.8]) box(4.8, 2.45, 0.045, glass, 0, 3.08, z, filler);
   cyl(0.24, 0.45, dark, 0, 5.55, 0, filler);
-  const lampM2 = cyl(0.14, 0.2, green, 0, 5.9, 0, filler);
 
   // Machine 3: capper, last machine
   const capper = new THREE.Group();
@@ -197,7 +202,6 @@ export function mountTwin(container: HTMLElement): Twin | null {
   box(2.8, 0.1, 2.8, blue, 5.35, 3.89, 0, capper);
   for (const x of [4.6, 5.35, 6.1]) cyl(0.14, 1.25, chrome, x, 3.12, 0, capper);
   box(2.7, 1.6, 0.06, glass, 5.35, 2.85, 1.48, capper);
-  const lampM3 = cyl(0.14, 0.2, green, 5.35, 4.7, 0, capper);
 
   // Inspection and control cabinet (visual only)
   const inspect = new THREE.Group();
@@ -241,10 +245,8 @@ export function mountTwin(container: HTMLElement): Twin | null {
     cyl(0.13, 0.1, yellow, x, 2.05, 2.9);
   }
 
-  // Status lamps follow machine state: running green, faulted amber
-  const lamps: Record<TwinMachine, THREE.Mesh> = { m1: lampM1, m2: lampM2, m3: lampM3 };
-  const faultedMaterial = amber;
-  const runningMaterial = green;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let lineFaulted = false;
 
   let flowing = true;
   let travel = 0;
@@ -259,9 +261,8 @@ export function mountTwin(container: HTMLElement): Twin | null {
   function update(next: { machines: Record<TwinMachine, 'running' | 'faulted'>; running: boolean }) {
     state.machines = next.machines;
     flowing = next.running && next.machines.m2 === 'running';
-    (Object.keys(lamps) as TwinMachine[]).forEach((id) => {
-      lamps[id].material = next.machines[id] === 'faulted' ? faultedMaterial : runningMaterial;
-    });
+    lineFaulted = Object.values(next.machines).includes('faulted');
+    beacon.material = lineFaulted ? beaconFault : beaconRunning;
   }
 
   const resize = () => {
@@ -288,6 +289,10 @@ export function mountTwin(container: HTMLElement): Twin | null {
       bottles[i].fluid.position.y = 0.05 + 0.18 * f;
     }
     if (flowing) heads.forEach((h, i) => (h.position.y = 4.02 + Math.sin(elapsed * 3 + i * 0.8) * 0.07));
+
+    if (lineFaulted) {
+      beaconFault.emissiveIntensity = reduceMotion || Math.sin(elapsed * Math.PI * 2.4) > 0 ? 2.6 : 0.2;
+    }
 
     controls.update();
     renderer.render(scene, camera);
