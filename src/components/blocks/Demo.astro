@@ -1,0 +1,423 @@
+---
+import { getSite } from '../../lib/data';
+import { fill } from '../../lib/text';
+import { INITIAL_STATE, computeMetrics, machineStatus, messageKey } from '../../lib/demo';
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  product: Product;
+}
+
+const { demo } = Astro.props.product;
+const { ui } = getSite();
+
+const state = INITIAL_STATE;
+const metrics = demo ? computeMetrics(demo, state) : null;
+---
+{demo && metrics && (
+  <section id="demo" class="section demo on-dark">
+    <div class="container">
+      <header class="head">
+        <div class="copy">
+          <h2>{demo.title}</h2>
+          <p>{demo.intro}</p>
+        </div>
+        <p class="disclaimer">{demo.disclaimer}</p>
+      </header>
+
+      <div class="body">
+        <div class="sim">
+          <div class="machines">
+            {demo.machines.map((machine) => {
+              const status = machineStatus(demo, state, machine.name);
+              return (
+                <article class="machine" data-machine={machine.name}>
+                  <svg viewBox="0 0 160 86" width="100%" height="86" aria-hidden="true">
+                    <rect x="22" y="10" width="116" height="54" rx="8" fill="#16406f" />
+                    <rect x="36" y="22" width="44" height="26" rx="4" fill={status === 'faulted' ? 'var(--fault)' : 'var(--signal)'} />
+                    <circle cx="108" cy="35" r="11" fill="none" stroke={status === 'faulted' ? 'var(--fault)' : 'var(--signal)'} stroke-width="4" />
+                    <rect x="8" y="66" width="144" height="10" rx="5" fill="#25507f" />
+                  </svg>
+                  <div class="meta">
+                    <span class="m-name">{machine.name}</span>
+                    <span class="m-role">{machine.role}</span>
+                  </div>
+                  <span class:list={['pill', status]} data-status>
+                    {status === 'faulted' ? ui.demo.faulted : ui.demo.running}
+                  </span>
+                </article>
+              );
+            })}
+          </div>
+
+          <div class="controls">
+            <button type="button" class="btn btn-fault" data-fault>{demo.fault.button}</button>
+            <button type="button" class="btn btn-ghost-dark" data-reset hidden>{demo.reset}</button>
+            <p class="message" data-message aria-live="polite">{demo.messages[messageKey(demo, state)]}</p>
+          </div>
+
+          <div class="prompt" data-prompt hidden>
+            <p>{demo.fault.prompt}</p>
+            <div class="reasons">
+              {demo.reasons.map((reason) => (
+                <button type="button" class="btn btn-reason" data-reason={reason.id}>{reason.label}</button>
+              ))}
+            </div>
+          </div>
+
+          <div class="events">
+            <h3>{ui.demo.events}</h3>
+            <div class="rows" data-events>
+              {demo.seedEvents.map((event) => (
+                <div class="ev">
+                  <span class="ev-time">{event.time}</span>
+                  <span class="ev-machine">{event.machine}</span>
+                  <span class="ev-minutes">{fill(ui.demo.minutes, { minutes: event.minutes })}</span>
+                  <span class="ev-reason">{event.reason}</span>
+                  <span class="ev-kind">{event.planned ? ui.demo.planned : ui.demo.unplanned}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <aside class="metrics">
+          <p class="oee-label">{ui.demo.lineOee}</p>
+          <p class="oee" data-oee>{metrics.oee}%</p>
+          <div class="bars">
+            {[
+              { key: 'availability', label: ui.demo.availability, value: metrics.availability, color: 'var(--action)' },
+              { key: 'performance', label: ui.demo.performance, value: metrics.performance, color: 'var(--indigo)' },
+              { key: 'quality', label: ui.demo.quality, value: metrics.quality, color: 'var(--volt)' },
+            ].map((bar) => (
+              <div class="bar">
+                <div class="bar-head">
+                  <span>{bar.label}</span>
+                  <span class="bar-value" data-metric={bar.key}>{bar.value}%</span>
+                </div>
+                <div class="track">
+                  <div class="fill" data-fill={bar.key} style={`width: ${bar.value}%; background: ${bar.color}`}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div class="totals">
+            <span>{fill(ui.demo.scheduled, { minutes: demo.shiftMinutes })}</span>
+            <span data-unplanned-total>{fill(ui.demo.unplannedStops, { minutes: metrics.unplanned })}</span>
+            <span data-planned-total>{fill(ui.demo.plannedStops, { minutes: metrics.planned })}</span>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .demo {
+    background: var(--night);
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+  }
+
+  .copy {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 640px;
+  }
+
+  h2 {
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--on-dark);
+  }
+
+  .copy p {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--on-dark-muted);
+  }
+
+  .disclaimer {
+    font-size: 14px;
+    color: var(--on-dark-faint);
+  }
+
+  .body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .sim {
+    flex: 3 1 560px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding: 32px;
+    background: var(--panel-dark);
+    border-radius: var(--radius-card);
+  }
+
+  .machines {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .machine {
+    flex: 1 1 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    background: var(--panel-dark-2);
+    border-radius: 18px;
+    border: 2px solid var(--line-dark-soft);
+  }
+
+  .machine:has(.pill.faulted) {
+    border-color: var(--fault);
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .m-name {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--on-dark);
+  }
+
+  .m-role {
+    font-size: 14px;
+    color: var(--on-dark-muted);
+  }
+
+  .pill {
+    align-self: flex-start;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-weight: 600;
+    background: var(--signal);
+    color: var(--night);
+  }
+
+  .pill.faulted {
+    background: var(--fault);
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .message {
+    flex: 1 1 280px;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--on-dark-soft);
+  }
+
+  .prompt {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 24px;
+    background: var(--panel-dark-2);
+    border-radius: 18px;
+    border: 2px solid var(--volt);
+  }
+
+  .prompt p {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--on-dark);
+  }
+
+  .reasons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .btn-reason {
+    min-height: 44px;
+    padding: 12px 18px;
+    border: 0;
+    background: var(--on-dark);
+    color: var(--night);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .events {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .events h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--on-dark);
+  }
+
+  .rows {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--line-dark);
+  }
+
+  .ev {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line-dark);
+    font-size: 16px;
+    color: var(--on-dark);
+  }
+
+  .ev-time,
+  .ev-minutes,
+  .ev-kind {
+    color: var(--on-dark-muted);
+  }
+
+  .ev-time {
+    flex: 0 0 72px;
+  }
+
+  .ev-machine {
+    flex: 1 1 120px;
+    font-weight: 500;
+  }
+
+  .ev-minutes {
+    flex: 0 0 72px;
+  }
+
+  .ev-reason {
+    flex: 1 1 160px;
+    font-weight: 500;
+  }
+
+  .ev-kind {
+    flex: 0 0 90px;
+  }
+
+  .metrics {
+    flex: 2 1 340px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 32px;
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: var(--radius-card);
+  }
+
+  .oee-label {
+    font-size: 15px;
+    color: var(--muted);
+  }
+
+  .oee {
+    font-size: 88px;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+
+  .bars {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .bar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 16px;
+  }
+
+  .bar-head {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .bar-value {
+    font-weight: 600;
+  }
+
+  .track {
+    height: 10px;
+    border-radius: 5px;
+    background: var(--line);
+    overflow: hidden;
+  }
+
+  .fill {
+    height: 10px;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+  }
+
+  .totals {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--body);
+  }
+
+  @media (max-width: 760px) {
+    h2 {
+      font-size: 32px;
+    }
+
+    .oee {
+      font-size: 64px;
+    }
+
+    .sim,
+    .metrics {
+      padding: 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fill {
+      transition: none;
+    }
+  }
+</style>

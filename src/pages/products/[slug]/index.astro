@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import Hero from '../../../components/blocks/Hero.astro';
+import Problem from '../../../components/blocks/Problem.astro';
+import Questions from '../../../components/blocks/Questions.astro';
+import Architecture from '../../../components/blocks/Architecture.astro';
+import Flow from '../../../components/blocks/Flow.astro';
+import Demo from '../../../components/blocks/Demo.astro';
+import Kpi from '../../../components/blocks/Kpi.astro';
+import Timeline from '../../../components/blocks/Timeline.astro';
+import Rollup from '../../../components/blocks/Rollup.astro';
+import Value from '../../../components/blocks/Value.astro';
+import Deck from '../../../components/blocks/Deck.astro';
+import Cta from '../../../components/blocks/Cta.astro';
+import { getProduct, getSite } from '../../../lib/data';
+import { url } from '../../../lib/paths';
+import type { BlockName } from '../../../lib/schema';
+
+// Each block renders its own data and skips itself when the data is absent
+const BLOCKS: Record<BlockName, typeof Hero> = {
+  hero: Hero,
+  problem: Problem,
+  questions: Questions,
+  architecture: Architecture,
+  flow: Flow,
+  demo: Demo,
+  kpi: Kpi,
+  day: Timeline,
+  rollup: Rollup,
+  value: Value,
+  deck: Deck,
+  cta: Cta,
+};
+
+export function getStaticPaths() {
+  return getSite().products.flatMap((card) =>
+    card.status === 'available' ? [{ params: { slug: card.slug } }] : [],
+  );
+}
+
+const { slug } = Astro.params;
+const product = getProduct(slug);
+const site = getSite();
+const ctaLabel = product.cta?.button ?? site.cta.button;
+---
+<BaseLayout title={product.seo.title} description={product.seo.description}>
+  <Header
+    brandHref={url()}
+    brandAria={site.ui.homeAria}
+    logo={{ src: site.logo.light, alt: site.logo.alt }}
+    navAria={site.ui.pageNavAria}
+    nav={product.nav}
+    cta={{ label: ctaLabel, href: '#contact' }}
+    divided
+  />
+
+  <main id="main">
+    {product.blocks.map((name) => {
+      const Block = BLOCKS[name];
+      return <Block product={product} />;
+    })}
+  </main>
+
+  <Footer homeHref={url()} homeAria={site.ui.homeAria} logo={{ src: site.logo.light, alt: site.logo.alt }} legal={site.footer.legal} />
+</BaseLayout>

@@ -1,0 +1,147 @@
+---
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  product: Product;
+}
+
+const { kpi } = Astro.props.product;
+
+// Letter colors from the approved canvas: A action, P indigo, Q volt
+const colors: Record<string, string> = { A: 'var(--action)', P: 'var(--indigo)', Q: 'var(--volt)' };
+---
+{kpi && (
+  <section id="oee" class="section kpi">
+    <div class="container">
+      <div class="intro">
+        <h2>{kpi.title}</h2>
+        <p>{kpi.intro}</p>
+      </div>
+      <div class="factors">
+        {kpi.factors.map((factor) => (
+          <article class="factor">
+            <span class="letter" style={`color: ${colors[factor.letter] ?? 'var(--ink)'}`}>{factor.letter}</span>
+            <h3>{factor.name}</h3>
+            <p class="question">{factor.question}</p>
+            <p class="loss">{factor.loss}</p>
+          </article>
+        ))}
+      </div>
+      <div class="example">
+        <p class="value">{kpi.example.value}</p>
+        <p class="body">{kpi.example.body}</p>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .kpi {
+    background: var(--paper);
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 760px;
+  }
+
+  h2 {
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .intro p {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--body);
+  }
+
+  .factors {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+
+  .factor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 36px;
+    background: var(--white);
+    border-radius: var(--radius-card);
+  }
+
+  .letter {
+    font-size: 64px;
+    font-weight: 300;
+    line-height: 1;
+  }
+
+  h3 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .question {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .loss {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .example {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 32px;
+    padding: 40px 44px;
+    background: var(--night);
+    border-radius: var(--radius-card);
+  }
+
+  .value {
+    flex: 0 0 auto;
+    font-size: 72px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--signal);
+  }
+
+  .body {
+    flex: 1 1 420px;
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--on-dark-soft);
+  }
+
+  @media (max-width: 760px) {
+    h2 {
+      font-size: 32px;
+    }
+
+    .example {
+      padding: 28px;
+    }
+
+    .value {
+      font-size: 56px;
+    }
+  }
+</style>

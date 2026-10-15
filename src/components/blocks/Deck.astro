@@ -1,0 +1,89 @@
+---
+import { getSite } from '../../lib/data';
+import { url } from '../../lib/paths';
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  product: Product;
+}
+
+const { deck } = Astro.props.product;
+const { ui } = getSite();
+// Pending decks show the copy without download links (docs/decisions.md D8)
+const showLinks = !!deck && !deck.pending;
+---
+{deck && (
+  <section id="deck" class="section deck on-dark">
+    <div class="container">
+      <div class="copy">
+        <h2>{deck.title}</h2>
+        <p>{deck.body}</p>
+      </div>
+      {showLinks && (
+        <div class="actions">
+          <a class="btn btn-light" href={url(deck.pdf)} download>{ui.downloadPdf}</a>
+          <a class="btn btn-ghost-dark" href={deck.slidesUrl}>{ui.viewSlides}</a>
+        </div>
+      )}
+    </div>
+  </section>
+)}
+
+<style>
+  .deck {
+    background: var(--deep);
+    color: var(--on-dark);
+  }
+
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  .copy {
+    flex: 1 1 360px;
+    max-width: 620px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  h2 {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--on-dark);
+  }
+
+  p {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--on-dark-soft);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .btn-light {
+    background: var(--on-dark);
+    color: var(--night);
+    font-weight: 600;
+  }
+
+  .btn-light:hover {
+    color: var(--night);
+    background: var(--white);
+  }
+
+  @media (max-width: 760px) {
+    h2 {
+      font-size: 26px;
+    }
+  }
+</style>

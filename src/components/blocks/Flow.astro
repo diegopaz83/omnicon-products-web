@@ -1,0 +1,104 @@
+---
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  product: Product;
+}
+
+const { flow } = Astro.props.product;
+
+// Step accent colors from the approved canvas, from signal to volt
+const accents = ['#00dcfa', '#2ca9f5', '#3c7af0', '#5a5cf8', '#7543ff'];
+---
+{flow && (
+  <section class="section flow">
+    <div class="container">
+      <h2>{flow.title}</h2>
+      <ol class="steps">
+        {flow.steps.map((step, index) => (
+          <li class:list={['step', { human: step.human }]} style={`--accent: ${accents[index % accents.length]}`}>
+            <span class="label">{step.label}</span>
+            <span class="name">{step.name}</span>
+            <span class="body">{step.body}</span>
+          </li>
+        ))}
+      </ol>
+      <p class="rule">{flow.rule}</p>
+    </div>
+  </section>
+)}
+
+<style>
+  .flow {
+    background: var(--white);
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  h2 {
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    max-width: 22ch;
+  }
+
+  .steps {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 28px;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 20px;
+    border-top: 3px solid var(--accent);
+  }
+
+  .label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--action);
+  }
+
+  .step.human .label {
+    color: #5a2fd9;
+  }
+
+  .name {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .body {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .rule {
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--ink);
+    max-width: 52ch;
+  }
+
+  @media (max-width: 760px) {
+    h2 {
+      font-size: 32px;
+    }
+
+    .rule {
+      font-size: 19px;
+    }
+  }
+</style>

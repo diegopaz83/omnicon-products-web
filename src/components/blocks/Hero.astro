@@ -1,0 +1,138 @@
+---
+import { url } from '../../lib/paths';
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  product: Product;
+}
+
+const { hero } = Astro.props.product;
+const media = hero?.media;
+const playable = !!media && !media.pending && !!media.mp4;
+---
+{hero && (
+  <section class="hero on-dark" style={`--hero-art: url('${url(hero.background)}')`}>
+    <div class="container grid">
+      <div class="copy">
+        <p class="label">{hero.label}</p>
+        <h1>{hero.title}</h1>
+        <p class="subtitle">{hero.subtitle}</p>
+        <div class="actions">
+          <a class="btn btn-signal" href={hero.ctaPrimary.href}>{hero.ctaPrimary.label}</a>
+          <a class="btn btn-ghost-dark" href={hero.ctaSecondary.href}>{hero.ctaSecondary.label}</a>
+        </div>
+      </div>
+      <figure class="media">
+        {playable && media?.mp4 ? (
+          <video class="motion" muted loop playsinline preload="metadata" poster={url(media.poster)} aria-label={media.posterAlt}>
+            {media.webm && <source src={url(media.webm)} type="video/webm" />}
+            <source src={url(media.mp4)} type="video/mp4" />
+          </video>
+        ) : (
+          <img src={url(media?.poster ?? '')} alt={media?.posterAlt ?? ''} width="1200" height="750" />
+        )}
+        {media?.caption && <figcaption>{media.caption}</figcaption>}
+      </figure>
+    </div>
+  </section>
+)}
+
+<script>
+  // Autoplay the motion only when reduced motion is not requested (SPEC §8)
+  const video = document.querySelector<HTMLVideoElement>('.motion');
+  if (video && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    video.play().catch(() => {});
+  }
+</script>
+
+<style>
+  .hero {
+    background: var(--night) var(--hero-art, none) right -120px bottom -60px / 900px auto no-repeat;
+    padding: 88px 0 112px;
+  }
+
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 56px;
+    align-items: center;
+  }
+
+  .copy {
+    flex: 1 1 460px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .label {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--signal);
+  }
+
+  h1 {
+    font-size: clamp(40px, 5.4vw, 72px);
+    font-weight: 300;
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--on-dark);
+  }
+
+  .subtitle {
+    font-size: 20px;
+    line-height: 1.6;
+    color: var(--on-dark-muted);
+    max-width: 46ch;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .media {
+    position: relative;
+    flex: 1 1 420px;
+    min-width: 0;
+    margin: 0;
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--panel-dark);
+    box-shadow: 0 40px 90px rgba(0, 0, 0, 0.45);
+  }
+
+  .media img,
+  .media video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .media img {
+    opacity: 0.75;
+  }
+
+  figcaption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 16px 20px;
+    background: rgba(0, 28, 63, 0.7);
+    color: var(--on-dark-soft);
+    font-size: 15px;
+  }
+
+  @media (max-width: 760px) {
+    .hero {
+      background-size: 600px auto;
+      padding: 56px 0 72px;
+    }
+  }
+</style>

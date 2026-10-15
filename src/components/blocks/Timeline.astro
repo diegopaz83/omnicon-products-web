@@ -1,0 +1,96 @@
+---
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  product: Product;
+}
+
+const { day } = Astro.props.product;
+
+// Phase numbers take the canvas colors: action, indigo, volt
+const numberColors = ['var(--action)', 'var(--indigo)', 'var(--volt)'];
+---
+{day && (
+  <section class="section day">
+    <div class="container">
+      <h2>{day.title}</h2>
+      <ol class="phases">
+        {day.phases.map((phase, index) => (
+          <li class="phase">
+            <div class="head">
+              <span class="number" style={`color: ${numberColors[index] ?? 'var(--ink)'}`}>{index + 1}</span>
+              <h3>{phase.name}</h3>
+            </div>
+            <ul>
+              {phase.items.map((item) => <li>{item}</li>)}
+            </ul>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+)}
+
+<style>
+  .day {
+    background: var(--white);
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  h2 {
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .phases {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+  }
+
+  .phase {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .number {
+    font-size: 48px;
+    font-weight: 300;
+    line-height: 1;
+  }
+
+  h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  ul {
+    padding-left: 20px;
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--body);
+  }
+
+  @media (max-width: 760px) {
+    h2 {
+      font-size: 32px;
+    }
+  }
+</style>

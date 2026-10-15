@@ -1,0 +1,220 @@
+---
+import { getSite } from '../../lib/data';
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  product: Product;
+}
+
+const { architecture } = Astro.props.product;
+const { ui } = getSite();
+const defaultLayer =
+  architecture?.layers.find((layer) => layer.id === architecture.defaultLayer) ??
+  architecture?.layers[0];
+---
+{architecture && defaultLayer && (
+  <section id="how" class="section how">
+    <div class="container">
+      <div class="intro">
+        <h2>{architecture.title}</h2>
+        <p>{architecture.intro}</p>
+      </div>
+      <div class="layers">
+        {architecture.layers.map((layer) => (
+          <button
+            type="button"
+            class="layer"
+            aria-pressed={layer.id === defaultLayer.id ? 'true' : 'false'}
+            data-name={layer.name}
+            data-tech={layer.tech}
+            data-cadence={layer.cadence}
+            data-detail={layer.detail}
+          >
+            <span class="zone">{layer.zone}</span>
+            <span class="name">{layer.name}</span>
+          </button>
+        ))}
+      </div>
+      <div class="trace" aria-hidden="true"></div>
+      <div class="panel">
+        <div class="detail">
+          <h3 class="panel-name">{defaultLayer.name}</h3>
+          <p class="panel-detail">{defaultLayer.detail}</p>
+        </div>
+        <dl class="facts">
+          <dt>{ui.runsOn}</dt>
+          <dd class="panel-tech">{defaultLayer.tech}</dd>
+          <dt>{ui.howOften}</dt>
+          <dd class="panel-cadence">{defaultLayer.cadence}</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+)}
+
+<script>
+  const root = document.querySelector<HTMLElement>('.how');
+  if (root) {
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('.layer'));
+    const panelName = root.querySelector<HTMLElement>('.panel-name');
+    const panelDetail = root.querySelector<HTMLElement>('.panel-detail');
+    const panelTech = root.querySelector<HTMLElement>('.panel-tech');
+    const panelCadence = root.querySelector<HTMLElement>('.panel-cadence');
+
+    // Show one layer: update pressed state and the detail panel
+    const select = (button: HTMLButtonElement) => {
+      buttons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+      if (panelName) panelName.textContent = button.dataset.name ?? '';
+      if (panelDetail) panelDetail.textContent = button.dataset.detail ?? '';
+      if (panelTech) panelTech.textContent = button.dataset.tech ?? '';
+      if (panelCadence) panelCadence.textContent = button.dataset.cadence ?? '';
+    };
+
+    buttons.forEach((button) => button.addEventListener('click', () => select(button)));
+  }
+</script>
+
+<style>
+  .how {
+    background: var(--paper);
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 720px;
+  }
+
+  h2 {
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .intro p {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--body);
+  }
+
+  .layers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .layer {
+    flex: 1 1 170px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 20px 22px;
+    border: 1.5px solid var(--line);
+    border-radius: 18px;
+    background: var(--white);
+    color: var(--ink);
+    text-align: left;
+  }
+
+  .layer[aria-pressed='true'] {
+    background: var(--night);
+    border-color: var(--night);
+    color: var(--on-dark);
+  }
+
+  .zone {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  .name {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .trace {
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--signal), var(--volt));
+  }
+
+  .panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    padding: 44px;
+    background: var(--white);
+    border-radius: var(--radius-card);
+  }
+
+  .detail {
+    flex: 1 1 420px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .panel-name {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .panel-detail {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--body);
+  }
+
+  .facts {
+    flex: 1 1 280px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding-left: 32px;
+    border-left: 1px solid var(--line);
+  }
+
+  .facts dt {
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .facts dt:first-child {
+    margin-top: 0;
+  }
+
+  .facts dd {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  @media (max-width: 480px) {
+    .panel {
+      padding: 28px;
+    }
+
+    .facts {
+      padding-left: 0;
+      border-left: 0;
+      border-top: 1px solid var(--line);
+      padding-top: 20px;
+    }
+  }
+</style>

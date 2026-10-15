@@ -131,7 +131,7 @@ button {
 }
 
 .section {
-  padding: var(--section-y) var(--gutter);
+  padding: var(--section-y) 0;
 }
 
 .skip-link {

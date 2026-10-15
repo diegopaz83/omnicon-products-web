@@ -1,0 +1,105 @@
+---
+import { url } from '../../lib/paths';
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  product: Product;
+}
+
+const { benefits, foundations } = Astro.props.product;
+---
+{benefits && (
+  <section id="value" class="section value">
+    <div class="container">
+      <h2>{benefits.title}</h2>
+      <div class="benefits">
+        {benefits.items.map((item) => (
+          <article class="benefit">
+            <img src={url(item.icon)} alt="" width="64" height="64" loading="lazy" />
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))}
+      </div>
+      {foundations && foundations.length > 0 && (
+        <ul class="foundations">
+          {foundations.map((foundation) => (
+            <li><strong>{foundation.strong}</strong> {foundation.text}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+)}
+
+<style>
+  .value {
+    background: var(--white);
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+  }
+
+  h2 {
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .benefits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 40px;
+  }
+
+  .benefit {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .benefit img {
+    width: 64px;
+    height: 64px;
+  }
+
+  h3 {
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .benefit p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .foundations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    list-style: none;
+    font-size: 16px;
+    color: var(--body);
+  }
+
+  .foundations strong {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  @media (max-width: 760px) {
+    h2 {
+      font-size: 32px;
+    }
+  }
+</style>

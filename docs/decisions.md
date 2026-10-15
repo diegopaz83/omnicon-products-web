@@ -19,3 +19,6 @@ Implementation choices where SPEC.md is silent or ambiguous. Newest at the botto
 | D13 | Grounds | No dark mode; grounds are fixed per section | The brand alternates dark and light grounds by design |
 | D14 | Demo | After a reason is chosen, Machine 2 returns to Running | Matches the approved canvas behavior |
 | D15 | Draft copy | `about.draft` is rendered like any other copy | SPEC §11 item 5 is open; the flag marks it, it does not hide it |
+| D16 | Meta strings | Project meta uses commas, not middle dots | SPEC §3 avoids middle-dot meta strings |
+| D17 | Tables | The open-questions table scrolls inside its own wrapper on phones | Keeps the page itself free of horizontal scroll at 360 px |
+| D18 | Demo markup | The demo block renders its initial state on the server; the client script takes over in the next step | Shares `src/lib/demo.ts` between server and client |

@@ -1,0 +1,86 @@
+---
+import { url } from '../../lib/paths';
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  product: Product;
+}
+
+const { promise, questions } = Astro.props.product;
+---
+{promise && questions && (
+  <section class="section questions">
+    <div class="container">
+      <p class="promise">{promise}</p>
+      <div class="grid">
+        {questions.map((question) => (
+          <article class="item">
+            <img src={url(question.icon)} alt="" width="64" height="64" loading="lazy" />
+            <div class="text">
+              <h3>{question.title}</h3>
+              <p>{question.body}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .questions {
+    background: var(--white);
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .promise {
+    font-size: clamp(30px, 3.6vw, 48px);
+    font-weight: 300;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    max-width: 24ch;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 48px 40px;
+  }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .item img {
+    flex: none;
+    width: 64px;
+    height: 64px;
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  h3 {
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,13 @@
+---
+import CtaBand from '../CtaBand.astro';
+import { getSite } from '../../lib/data';
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  product: Product;
+}
+
+// Product CTA overrides the site-level default
+const cta = Astro.props.product.cta ?? getSite().cta;
+---
+<CtaBand title={cta.title} body={cta.body} button={cta.button} href={cta.href} />
