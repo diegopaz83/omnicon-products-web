@@ -154,14 +154,19 @@ export function mountTwin(container: HTMLElement): Twin | null {
       box(0.14, 1, 0.15, steel, x, 0.51, z, conveyor);
       box(0.29, 0.1, 0.28, dark, x, 0.06, z, conveyor);
     }
-  // Line beacon at the infeed: green while running, blinking amber on a stop
-  cyl(0.2, 0.3, dark, -11.2, 1.8, 0.9, root, 16);
-  const beaconRunning = glow('#37edab', 1.4);
-  const beaconFault = glow('#ffb547', 2.6);
-  const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 12), beaconRunning);
-  beacon.position.set(-11.2, 2.25, 0.9);
-  beacon.castShadow = true;
-  root.add(beacon);
+  // Line tower light at the infeed: green on while running, red blinking on a stop
+  const towerX = -11.2;
+  const towerZ = 0.9;
+  cyl(0.24, 0.2, dark, towerX, 1.7, towerZ, root, 16);
+  cyl(0.1, 0.5, chrome, towerX, 2.05, towerZ, root, 12);
+  const greenOn = glow('#37edab', 1.6);
+  const greenOff = glow('#14402f', 0.05);
+  const redOn = glow('#ff3b3b', 2.4);
+  const redOff = glow('#4a1a1a', 0.05);
+  const amberOff = glow('#4a3a14', 0.05);
+  const greenSeg = cyl(0.17, 0.28, greenOn, towerX, 2.2, towerZ, root, 16);
+  cyl(0.17, 0.28, amberOff, towerX, 2.5, towerZ, root, 16);
+  const redSeg = cyl(0.17, 0.28, redOff, towerX, 2.8, towerZ, root, 16);
 
   // Tank and piping
   const tank = new THREE.Group();
@@ -262,7 +267,8 @@ export function mountTwin(container: HTMLElement): Twin | null {
     state.machines = next.machines;
     flowing = next.running && next.machines.m2 === 'running';
     lineFaulted = Object.values(next.machines).includes('faulted');
-    beacon.material = lineFaulted ? beaconFault : beaconRunning;
+    redSeg.material = lineFaulted ? redOn : redOff;
+    greenSeg.material = lineFaulted ? greenOff : greenOn;
   }
 
   const resize = () => {
@@ -291,7 +297,7 @@ export function mountTwin(container: HTMLElement): Twin | null {
     if (flowing) heads.forEach((h, i) => (h.position.y = 4.02 + Math.sin(elapsed * 3 + i * 0.8) * 0.07));
 
     if (lineFaulted) {
-      beaconFault.emissiveIntensity = reduceMotion || Math.sin(elapsed * Math.PI * 2.4) > 0 ? 2.6 : 0.2;
+      redOn.emissiveIntensity = reduceMotion || Math.sin(elapsed * Math.PI * 2.4) > 0 ? 2.4 : 0.15;
     }
 
     controls.update();

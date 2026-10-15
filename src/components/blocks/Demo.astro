@@ -28,6 +28,7 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
 
       <div class="stage" data-stage>
         <div class="bar">
+          <button type="button" class="btn btn-ghost-dark toggle" data-reset>{demo.reset}</button>
           <button type="button" class="btn btn-ghost-dark toggle" data-overview>{ui.demo.overview}</button>
           <button type="button" class="btn btn-ghost-dark toggle" data-toggle aria-expanded="false" data-enlarge={ui.twin.enlarge} data-restore={ui.twin.restore}>{ui.twin.enlarge}</button>
         </div>
@@ -92,7 +93,6 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
             <div class="controls">
               <button type="button" class="btn btn-fault" data-fault>{demo.fault.button}</button>
               <button type="button" class="btn btn-signal" data-restart hidden>{ui.demo.restart}</button>
-              <button type="button" class="btn btn-ghost-dark" data-reset hidden>{demo.reset}</button>
               <p class="message" data-message aria-live="polite">{demo.messages[messageKey(demo, INITIAL_STATE)]}</p>
             </div>
 
@@ -245,12 +245,10 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
 
     const renderControls = () => {
       const fault = q<HTMLButtonElement>('[data-fault]');
-      const reset = q<HTMLButtonElement>('[data-reset]');
       const restart = q<HTMLButtonElement>('[data-restart]');
       const prompt = q<HTMLElement>('[data-prompt]');
       const message = q<HTMLElement>('[data-message]');
       if (fault) fault.hidden = state.fault;
-      if (reset) reset.hidden = !state.fault;
       if (restart) restart.hidden = !(state.fault && state.reason && !state.restarted);
       if (prompt) prompt.hidden = !(state.fault && !state.reason);
       if (message) message.textContent = demo.messages[messageKey(demo, state)];
