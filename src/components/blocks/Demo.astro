@@ -28,7 +28,6 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
 
       <div class="stage" data-stage>
         <div class="bar">
-          <button type="button" class="btn btn-ghost-dark toggle" data-reset>{demo.reset}</button>
           <button type="button" class="btn btn-ghost-dark toggle" data-overview>{ui.demo.overview}</button>
           <button type="button" class="btn btn-ghost-dark toggle" data-toggle aria-expanded="false" data-enlarge={ui.twin.enlarge} data-restore={ui.twin.restore}>{ui.twin.enlarge}</button>
         </div>
@@ -364,13 +363,6 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
     q<HTMLButtonElement>('[data-restart]')?.addEventListener('click', () => {
       state = { ...state, restarted: true };
       render();
-      q<HTMLButtonElement>('[data-reset]')?.focus();
-    });
-
-    q<HTMLButtonElement>('[data-reset]')?.addEventListener('click', () => {
-      state = { ...INITIAL_STATE };
-      render();
-      q<HTMLButtonElement>('[data-fault]')?.focus();
     });
 
     q<HTMLButtonElement>('[data-overview]')?.addEventListener('click', () => twin?.resetView());

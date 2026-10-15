@@ -183,7 +183,6 @@ const DemoSchema = z.strictObject({
   fault: z.strictObject({ machine: text, time: text, minutes: count, button: text, prompt: text }),
   reasons: z.array(z.strictObject({ id: text, label: text, planned: z.boolean() })).min(1),
   messages: z.strictObject({ idle: text, unknown: text, restart: text, restarted: text }),
-  reset: text,
   v2: z.strictObject({ engine: text, reference: text }).optional(),
 });
 

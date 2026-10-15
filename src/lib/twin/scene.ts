@@ -155,18 +155,18 @@ export function mountTwin(container: HTMLElement): Twin | null {
       box(0.29, 0.1, 0.28, dark, x, 0.06, z, conveyor);
     }
   // Line tower light at the infeed: green on while running, red blinking on a stop
-  const towerX = -11.2;
-  const towerZ = 0.9;
-  cyl(0.24, 0.2, dark, towerX, 1.7, towerZ, root, 16);
-  cyl(0.1, 0.5, chrome, towerX, 2.05, towerZ, root, 12);
+  const towerX = 0;
+  const towerZ = 0;
+  cyl(0.24, 0.2, dark, towerX, 5.4, towerZ, root, 16);
+  cyl(0.1, 0.5, chrome, towerX, 5.75, towerZ, root, 12);
   const greenOn = glow('#37edab', 1.6);
   const greenOff = glow('#14402f', 0.05);
   const redOn = glow('#ff3b3b', 2.4);
   const redOff = glow('#4a1a1a', 0.05);
   const amberOff = glow('#4a3a14', 0.05);
-  const greenSeg = cyl(0.17, 0.28, greenOn, towerX, 2.2, towerZ, root, 16);
-  cyl(0.17, 0.28, amberOff, towerX, 2.5, towerZ, root, 16);
-  const redSeg = cyl(0.17, 0.28, redOff, towerX, 2.8, towerZ, root, 16);
+  const greenSeg = cyl(0.17, 0.28, greenOn, towerX, 6.15, towerZ, root, 16);
+  cyl(0.17, 0.28, amberOff, towerX, 6.45, towerZ, root, 16);
+  const redSeg = cyl(0.17, 0.28, redOff, towerX, 6.75, towerZ, root, 16);
 
   // Tank and piping
   const tank = new THREE.Group();
@@ -308,7 +308,7 @@ export function mountTwin(container: HTMLElement): Twin | null {
   // Label anchors above each machine, in world units
   const anchors: Record<TwinMachine, THREE.Vector3> = {
     m1: new THREE.Vector3(-2.5, 1.6, 1.8),
-    m2: new THREE.Vector3(0, 6.6, 0),
+    m2: new THREE.Vector3(0, 7.6, 0),
     m3: new THREE.Vector3(5.35, 5.6, 0),
   };
 

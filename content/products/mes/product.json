@@ -102,7 +102,6 @@
       "restart": "Reason recorded. Restart the line to resume production.",
       "restarted": "Line restarted. The stop stays in the log with its reason and its effect on OEE."
     },
-    "reset": "Replay demo",
     "v2": { "engine": "three@0.160.1", "reference": "design/reference/production-management-3d.html" }
   },
 
