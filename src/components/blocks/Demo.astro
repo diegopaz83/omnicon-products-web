@@ -1,7 +1,7 @@
 ---
 import { getSite } from '../../lib/data';
 import { fill } from '../../lib/text';
-import { INITIAL_STATE, computeMetrics, machineStatus, messageKey } from '../../lib/demo';
+import { INITIAL_STATE, computeMetrics, currentReason, faultTime, machineStatus, messageKey } from '../../lib/demo';
 import type { Product } from '../../lib/schema';
 
 interface Props {
@@ -128,7 +128,7 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
 {config && <script type="application/json" id="demo-config" is:inline set:html={JSON.stringify(config).replace(/</g, '\\u003c')} />}
 
 <script>
-  import { INITIAL_STATE, computeMetrics, machineStatus, messageKey } from '../../lib/demo';
+  import { INITIAL_STATE, computeMetrics, currentReason, faultTime, machineStatus, messageKey } from '../../lib/demo';
   import type { Demo, DemoState } from '../../lib/demo';
   import { fill } from '../../lib/text';
   import type { Twin } from '../../lib/twin/scene';
@@ -247,9 +247,9 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
       const restart = q<HTMLButtonElement>('[data-restart]');
       const prompt = q<HTMLElement>('[data-prompt]');
       const message = q<HTMLElement>('[data-message]');
-      if (fault) fault.hidden = state.fault;
-      if (restart) restart.hidden = !(state.fault && state.reason && !state.restarted);
-      if (prompt) prompt.hidden = !(state.fault && !state.reason);
+      if (fault) fault.hidden = state.open;
+      if (restart) restart.hidden = !(state.open && currentReason(state) !== null);
+      if (prompt) prompt.hidden = !(state.open && currentReason(state) === null);
       if (message) message.textContent = demo.messages[messageKey(demo, state)];
     };
 
@@ -266,17 +266,17 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
         planned: event.planned,
         unknown: false,
       }));
-      if (state.fault) {
-        const reason = demo.reasons.find((item) => item.id === state.reason);
+      state.stops.forEach((id, index) => {
+        const reason = demo.reasons.find((item) => item.id === id);
         rows.push({
-          time: demo.fault.time,
+          time: faultTime(demo, index),
           machine: demo.fault.machine,
           minutes: demo.fault.minutes,
           reason: reason?.label ?? ui.unknown,
           planned: !!reason?.planned,
           unknown: !reason,
         });
-      }
+      });
 
       container.replaceChildren(
         ...rows.map((row) => {
@@ -314,7 +314,7 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
 
     // Guide: 1 running, 2 breakdown, 3 explain the stop, 4 see the OEE
     const renderSteps = () => {
-      const active = !state.fault ? 0 : !state.reason ? 2 : !state.restarted ? 3 : 4;
+      const active = !state.open ? 0 : currentReason(state) === null ? 2 : 3;
       root.querySelectorAll<HTMLElement>('[data-step]').forEach((item) => {
         const index = Number(item.dataset.step);
         item.classList.toggle('done', index < active);
@@ -328,7 +328,7 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
         const machine = demo.machines.find((item) => item.id === tag.dataset.tag);
         if (!machine) return;
         const faulted = machineStatus(demo, state, machine.name) === 'faulted';
-        const alert = faulted && !state.reason;
+        const alert = faulted && currentReason(state) === null;
         tag.classList.toggle('alert', alert);
         const stateEl = tag.querySelector<HTMLElement>('[data-tag-state]');
         if (stateEl) stateEl.textContent = alert ? ui.faultAlert : faulted ? ui.faulted : ui.running;
@@ -347,21 +347,20 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
 
     // Move focus to the next control so keyboard users keep their place
     q<HTMLButtonElement>('[data-fault]')?.addEventListener('click', () => {
-      state = { fault: true, reason: null, restarted: false };
+      state = { stops: [...state.stops, null], open: true };
       render();
       q<HTMLButtonElement>('[data-reason]')?.focus();
     });
 
     root.querySelectorAll<HTMLButtonElement>('[data-reason]').forEach((button) => {
       button.addEventListener('click', () => {
-        state = { ...state, reason: button.dataset.reason ?? null };
+        state = { ...state, stops: state.stops.map((id, index, all) => (index === all.length - 1 ? button.dataset.reason ?? null : id)) };
         render();
-        q<HTMLButtonElement>('[data-reset]')?.focus();
       });
     });
 
     q<HTMLButtonElement>('[data-restart]')?.addEventListener('click', () => {
-      state = { ...state, restarted: true };
+      state = { ...state, open: false };
       render();
     });
 

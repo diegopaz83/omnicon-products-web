@@ -103,7 +103,7 @@
     "seedEvents": [
       { "time": "10:05", "machine": "Machine 1", "minutes": 24, "reason": "Material shortage", "planned": false }
     ],
-    "fault": { "machine": "Machine 2", "time": "13:40", "minutes": 12, "button": "Cause a breakdown on Machine 2", "prompt": "You are the operator. Why did Machine 2 stop?" },
+    "fault": { "machine": "Machine 2", "time": "13:40", "minutes": 12, "button": "Cause a breakdown on Machine 2", "prompt": "You are the operator. Why did Machine 2 stop?", "repeatEvery": 30 },
     "reasons": [
       { "id": "electrical", "label": "Electrical fault", "planned": false },
       { "id": "material", "label": "Material shortage", "planned": false },

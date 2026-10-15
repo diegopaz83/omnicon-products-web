@@ -189,7 +189,7 @@ const DemoSchema = z.strictObject({
   seedEvents: z.array(
     z.strictObject({ time: text, machine: text, minutes: count, reason: text, planned: z.boolean() }),
   ),
-  fault: z.strictObject({ machine: text, time: text, minutes: count, button: text, prompt: text }),
+  fault: z.strictObject({ machine: text, time: text, minutes: count, button: text, prompt: text, repeatEvery: count }),
   reasons: z.array(z.strictObject({ id: text, label: text, planned: z.boolean() })).min(1),
   messages: z.strictObject({ idle: text, unknown: text, restart: text, restarted: text }),
   v2: z.strictObject({ engine: text, reference: text }).optional(),
