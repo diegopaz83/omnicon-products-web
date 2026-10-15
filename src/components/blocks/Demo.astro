@@ -28,6 +28,7 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
 
       <div class="stage" data-stage>
         <div class="bar">
+          <button type="button" class="btn btn-ghost-dark toggle" data-overview>{ui.demo.overview}</button>
           <button type="button" class="btn btn-ghost-dark toggle" data-toggle aria-expanded="false" data-enlarge={ui.twin.enlarge} data-restore={ui.twin.restore}>{ui.twin.enlarge}</button>
         </div>
 
@@ -163,13 +164,43 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
       twin.update({ machines: machines as Record<'m1' | 'm2' | 'm3', 'running' | 'faulted'>, running: true });
     };
 
-    // Keep each label anchored above its machine while the camera moves
+    type Box = { left: number; top: number; right: number; bottom: number };
+
+    // Each label tries a few spots around its machine and takes the first one clear of the HUD
     const positionTags = () => {
       if (!twin) return;
+      const sceneEl = q<HTMLElement>('[data-scene]');
+      if (!sceneEl) return;
+      const bounds = sceneEl.getBoundingClientRect();
+      const obstacles = ['.hud-top', '.hud-bottom']
+        .map((selector) => q<HTMLElement>(selector)?.getBoundingClientRect())
+        .filter((rect): rect is DOMRect => !!rect);
+      const hits = (a: Box, b: DOMRect) =>
+        a.left < b.right + 6 && a.right > b.left - 6 && a.top < b.bottom + 6 && a.bottom > b.top - 6;
+
       root.querySelectorAll<HTMLElement>('[data-tag]').forEach((tag) => {
         const p = twin!.project(tag.dataset.tag as 'm1' | 'm2' | 'm3');
-        tag.style.transform = `translate(calc(${p.x}px - 50%), calc(${p.y}px - 100%))`;
-        tag.style.opacity = p.visible ? '1' : '0';
+        const w = tag.offsetWidth;
+        const h = tag.offsetHeight;
+        const ax = bounds.left + p.x;
+        const ay = bounds.top + p.y;
+        const spots = [
+          { left: ax - w / 2, top: ay - h - 10 },
+          { left: ax + 14, top: ay - h / 2 },
+          { left: ax - w - 14, top: ay - h / 2 },
+          { left: ax - w / 2, top: ay + 10 },
+        ];
+        const spot = spots.find((c) => {
+          const box = { left: c.left, top: c.top, right: c.left + w, bottom: c.top + h };
+          const inside = box.left >= bounds.left && box.right <= bounds.right && box.top >= bounds.top && box.bottom <= bounds.bottom;
+          return p.visible && inside && !obstacles.some((o) => hits(box, o));
+        });
+        if (spot) {
+          tag.style.transform = `translate(${spot.left - bounds.left}px, ${spot.top - bounds.top}px)`;
+          tag.style.opacity = '1';
+        } else {
+          tag.style.opacity = '0';
+        }
       });
       requestAnimationFrame(positionTags);
     };
@@ -335,6 +366,8 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
       q<HTMLButtonElement>('[data-fault]')?.focus();
     });
 
+    q<HTMLButtonElement>('[data-overview]')?.addEventListener('click', () => twin?.resetView());
+
     // Enlarge the whole stage; the toolbar stays outside the scene
     const stage = q<HTMLElement>('[data-stage]');
     const toggle = q<HTMLButtonElement>('[data-toggle]');
@@ -414,6 +447,7 @@ const config = demo ? { demo, ui: ui.demo, twin: ui.twin } : null;
   .bar {
     display: flex;
     justify-content: flex-end;
+    gap: 8px;
   }
 
   .toggle,

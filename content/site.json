@@ -92,6 +92,7 @@
       "running": "Running",
       "faulted": "Faulted",
       "faultAlert": "Stopped, no reason logged",
+      "overview": "Overview",
       "steps": ["Line running", "Breakdown on Machine 2", "Explain the stop", "See the OEE"]
     },
     "project": {

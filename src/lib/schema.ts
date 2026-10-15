@@ -70,6 +70,7 @@ const UiSchema = z.strictObject({
     running: text,
     faulted: text,
     faultAlert: text,
+    overview: text,
     steps: z.array(text).length(4),
   }),
   project: z.strictObject({

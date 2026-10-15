@@ -6,6 +6,7 @@ export type TwinMachine = 'm1' | 'm2' | 'm3';
 export interface Twin {
   update(state: { machines: Record<TwinMachine, 'running' | 'faulted'>; running: boolean }): void;
   project(id: TwinMachine): { x: number; y: number; visible: boolean };
+  resetView(): void;
   dispose(): void;
 }
 
@@ -309,9 +310,16 @@ export function mountTwin(container: HTMLElement): Twin | null {
     };
   }
 
+  function resetView() {
+    camera.position.set(16, 10, 18);
+    controls.target.set(0, 2, 0);
+    controls.update();
+  }
+
   return {
     update,
     project,
+    resetView,
     dispose() {
       cancelAnimationFrame(frameId);
       observer.disconnect();
