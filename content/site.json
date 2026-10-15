@@ -54,5 +54,57 @@
     "button": "Request a demo",
     "href": "mailto:[CONTACT_EMAIL]"
   },
-  "footer": { "legal": "© 2026 Omnicon S.A.S. All rights reserved." }
+  "footer": { "legal": "© 2026 Omnicon S.A.S. All rights reserved." },
+  "ui": {
+    "skipToContent": "Skip to content",
+    "homeAria": "Omnicon Products home",
+    "mainNavAria": "Main",
+    "pageNavAria": "Page sections",
+    "viewsNavAria": "Views",
+    "talkToUs": "Talk to us",
+    "explore": "Explore {name}",
+    "projectView": "Project view (internal)",
+    "internalBanner": "Internal view. Not included in the public build.",
+    "productTab": "Product",
+    "projectTab": "Project",
+    "runsOn": "Runs on",
+    "howOften": "How often",
+    "downloadPdf": "Download PDF",
+    "viewSlides": "View the slides",
+    "demo": {
+      "lineOee": "Line 1 OEE, this shift",
+      "availability": "Availability",
+      "performance": "Performance",
+      "quality": "Quality",
+      "scheduled": "Scheduled time: {minutes} min",
+      "unplannedStops": "Unplanned stops: {minutes} min",
+      "plannedStops": "Planned stops: {minutes} min",
+      "events": "Stop events this shift",
+      "unknown": "Unknown",
+      "unplanned": "Unplanned",
+      "planned": "Planned",
+      "minutes": "{minutes} min",
+      "running": "Running",
+      "faulted": "Faulted"
+    },
+    "project": {
+      "meta": "{designVersion}, pilot machine {pilot}, updated {updated}",
+      "completed": "Completed",
+      "nextStep": "Next step",
+      "openQuestions": "Open questions",
+      "tagsMapped": "Tags mapped",
+      "progress": "Progress",
+      "all": "All",
+      "done": "Done",
+      "pending": "Pending",
+      "inScope": "In scope",
+      "outOfScope": "Out of scope",
+      "draftNote": "[draft, confirm]",
+      "architecture": "Technical architecture",
+      "decisions": "Key decisions",
+      "colNumber": "#",
+      "colQuestion": "Question",
+      "colRecommendation": "Recommendation"
+    }
+  }
 }

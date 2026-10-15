@@ -1,3 +1,9 @@
 ---
+import { getSite, getProduct, getProject } from '../lib/data';
+const site = getSite();
+const mes = getProduct('mes');
+const project = getProject('mes');
 ---
-<html lang="en"><head><meta charset="utf-8"><title>Omnicon Products</title></head><body>Scaffold</body></html>
+<html lang="en"><head><meta charset="utf-8"><title>Omnicon Products</title></head><body>
+<p>{site.products.length} {mes.blocks.length} {project?.progress.length ?? 'none'}</p>
+</body></html>
