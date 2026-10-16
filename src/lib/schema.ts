@@ -42,6 +42,7 @@ const count = z.number().int().nonnegative();
 const UiSchema = z.strictObject({
   skipToContent: text,
   homeAria: text,
+  backToProducts: text,
   mainNavAria: text,
   pageNavAria: text,
   viewsNavAria: text,

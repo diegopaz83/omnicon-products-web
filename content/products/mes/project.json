@@ -1,7 +1,7 @@
 {
   "slug": "mes",
   "internal": true,
-  "title": "Omnicon MES: project status",
+  "title": "OPMM: project status",
   "meta": { "designVersion": "OEE design v0.5", "pilot": "L1_WC1_M1", "updated": "2026-10-15" },
   "summary": { "nextStep": "Shifts and calendar", "openQuestions": 12, "tagsMapped": 1 },
 

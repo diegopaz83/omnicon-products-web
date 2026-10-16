@@ -6,9 +6,11 @@ interface Props {
   homeAria: string;
   logo: { src: string; alt: string };
   legal: string;
+  backHref?: string;
+  backLabel?: string;
 }
 
-const { homeHref, homeAria, logo, legal } = Astro.props;
+const { homeHref, homeAria, logo, legal, backHref, backLabel } = Astro.props;
 ---
 <footer class="site-footer on-dark">
   <div class="container">
@@ -16,6 +18,7 @@ const { homeHref, homeAria, logo, legal } = Astro.props;
       <a href={homeHref} aria-label={homeAria}>
         <img src={url(logo.src)} alt={logo.alt} height="28" />
       </a>
+      {backHref && backLabel && <a class="back" href={backHref}>{backLabel}</a>}
       <p class="legal">{legal}</p>
     </div>
   </div>
@@ -45,5 +48,15 @@ const { homeHref, homeAria, logo, legal } = Astro.props;
 
   .legal {
     font-size: 14px;
+  }
+
+  .back {
+    font-size: 14px;
+    color: var(--signal);
+    text-decoration: none;
+  }
+
+  .back:hover {
+    color: var(--on-dark);
   }
 </style>

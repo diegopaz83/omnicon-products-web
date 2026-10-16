@@ -48,6 +48,12 @@ const site = getSite();
 const ctaLabel = product.cta?.button ?? site.cta.button;
 ---
 <BaseLayout title={product.seo.title} description={product.seo.description}>
+  <div class="back">
+    <div class="container">
+      <a href={url()}>{site.ui.backToProducts}</a>
+    </div>
+  </div>
+
   <Header
     brandHref={url()}
     brandAria={site.ui.homeAria}
@@ -65,5 +71,23 @@ const ctaLabel = product.cta?.button ?? site.cta.button;
     })}
   </main>
 
-  <Footer homeHref={url()} homeAria={site.ui.homeAria} logo={{ src: site.logo.light, alt: site.logo.alt }} legal={site.footer.legal} />
+  <Footer homeHref={url()} homeAria={site.ui.homeAria} logo={{ src: site.logo.light, alt: site.logo.alt }} legal={site.footer.legal} backHref={url()} backLabel={site.ui.backToProducts} />
 </BaseLayout>
+
+<style>
+  .back {
+    background: var(--night);
+    padding: 16px 0 0;
+  }
+
+  .back a {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--signal);
+    text-decoration: none;
+  }
+
+  .back a:hover {
+    color: var(--on-dark);
+  }
+</style>

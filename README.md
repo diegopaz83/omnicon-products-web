@@ -1,6 +1,6 @@
 # omnicon-products-web
 
-Omnicon's products website. Product #1: **Omnicon MES**.
+Omnicon's products website. Product #1: **OPMM** (Omnicon Production Monitoring & Management).
 
 | Folder | Content |
 |---|---|

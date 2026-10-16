@@ -13,7 +13,7 @@ Omnicon products website. Read `SPEC.md` first; it is the source of truth. Visua
 | Hosting | GitHub Pages, base `/omnicon-products-web` |
 | Stack | Astro (static) + TypeScript, Three.js in demo islands only, Zod for content schemas |
 | Site language | English only |
-| Product #1 | Omnicon MES (`content/products/mes/`) |
+| Product #1 | OPMM, Omnicon Production Monitoring & Management (`content/products/mes/`) |
 
 ## Rules
 

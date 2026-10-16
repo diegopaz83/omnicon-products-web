@@ -1,8 +1,8 @@
 {
   "slug": "mes",
-  "name": "Omnicon MES",
+  "name": "OPMM: Omnicon Production Monitoring & Management",
   "seo": {
-    "title": "Omnicon MES: from machine signals to management decisions",
+    "title": "OPMM: from machine signals to management decisions",
     "description": "Live machine status, every stop with its reason, and OEE by machine, line and plant. Built on ISA-95 for Rockwell plants."
   },
   "nav": [
@@ -14,7 +14,7 @@
   "blocks": ["hero", "problem", "questions", "tour", "flow", "demo", "kpi", "architecture", "day", "rollup", "value", "deck", "cta"],
 
   "hero": {
-    "label": "Omnicon MES",
+    "label": "OPMM",
     "title": "From machine signals to management decisions",
     "subtitle": "Live status for every machine, every stop with its reason, and one honest number for how well your lines really run.",
     "ctaPrimary": { "label": "See it working", "href": "#demo" },
@@ -41,7 +41,7 @@
     "image": { "src": "products/mes/control-room.jpg", "alt": "Two engineers reviewing production dashboards on a control-room screen" }
   },
 
-  "promise": "Omnicon MES turns machine signals into answers your team can act on.",
+  "promise": "OPMM turns machine signals into answers your team can act on.",
   "questions": [
     { "icon": "brand/icons/monitor.png", "title": "What is each machine doing right now?", "body": "Live status: running, stopped, slow or faulted." },
     { "icon": "brand/icons/output.png", "title": "How much did we make, and how much was good?", "body": "Good, scrap and rework counts by machine, line and order." },
@@ -65,8 +65,8 @@
 
   "tour": {
     "title": "How it works",
-    "intro": "Omnicon MES runs on the signals the plant already produces. These are the screens operators and managers use every shift.",
-    "image": { "src": "products/mes/product-tour.gif", "alt": "Omnicon MES screens: overview, lines and machines, orders, events and losses, and settings" },
+    "intro": "OPMM runs on the signals the plant already produces. These are the screens operators and managers use every shift.",
+    "image": { "src": "products/mes/product-tour.gif", "alt": "OPMM screens: overview, lines and machines, orders, events and losses, and settings" },
     "points": [
       { "title": "Overview", "body": "Totals, OEE against target, and the state of every line in one view." },
       { "title": "Lines & Machines", "body": "Each line and its machines, with output per hour and the stops that hold them back." },
