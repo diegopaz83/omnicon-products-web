@@ -165,11 +165,12 @@ const HeroSchema = z.strictObject({
   background: text,
 });
 
+// Each point is a chapter: "at" is the second of the looping clip where it starts
 const TourSchema = z.strictObject({
   title: text,
   intro: text,
-  image: asset,
-  points: z.array(z.strictObject({ title: text, body: text })).min(1),
+  video: z.strictObject({ src: text, poster: text, alt: text }),
+  points: z.array(z.strictObject({ title: text, body: text, at: count })).min(1),
 });
 
 const ArchitectureSchema = z

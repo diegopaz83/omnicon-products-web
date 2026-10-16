@@ -59,7 +59,7 @@ Each product page is an ordered list of blocks declared in its `product.json`. A
 | Hero | `Hero.astro` | `hero` | Title, subtitle, CTAs, motion video (poster + mp4/webm) |
 | Problem | `Problem.astro` | `problem` | 3 statements + photo |
 | Promise + Questions | `Questions.astro` | `promise`, `questions` | One sentence + 4 business questions with icons |
-| How it works (product tour) | `Tour.astro` | `tour` | Real product screens (GIF) with a short narrative per screen |
+| How it works (product tour) | `Tour.astro` | `tour` | Real product screens as a looping MP4 (muted, no audio) with six chapters; each chapter seeks the clip |
 | Flow | `Flow.astro` | `flow` | 5 steps signal → decision; step 4 is human input |
 | Concept (demo) | `Demo.astro` (island) | `demo` | Conceptual 3D line + OEE HUD, interactive (§6) |
 | KPI explainer | `Kpi.astro` | `kpi` | OEE = A × P × Q + worked example |

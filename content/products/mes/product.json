@@ -65,14 +65,19 @@
 
   "tour": {
     "title": "How it works",
-    "intro": "OPMM runs on the signals the plant already produces. These are the screens operators and managers use every shift.",
-    "image": { "src": "products/mes/product-tour.gif", "alt": "OPMM screens: overview, lines and machines, orders, events and losses, and settings" },
+    "intro": "Follow one stop on Line 1, from the first look at the plant to the reason on the record.",
+    "video": {
+      "src": "products/mes/how-it-works.mp4",
+      "poster": "products/mes/how-it-works-poster.jpg",
+      "alt": "OPMM screens in order: plant overview, a machine stopping on Line 1, the operator giving the stop a reason, orders, events and losses, and settings"
+    },
     "points": [
-      { "title": "Overview", "body": "Totals, OEE against target, and the state of every line in one view." },
-      { "title": "Lines & Machines", "body": "Each line and its machines, with output per hour and the stops that hold them back." },
-      { "title": "Orders", "body": "Production orders against plan, with priority and progress." },
-      { "title": "Events & Losses", "body": "Every stop with its duration and reason, ranked by its impact on OEE." },
-      { "title": "Settings", "body": "Users, order loading, and the downtime reasons operators choose from." }
+      { "title": "See the plant", "body": "Totals, OEE against target and the state of every line on one screen. This is where a shift starts.", "at": 0 },
+      { "title": "Watch a machine stop", "body": "Machine 2 turns red on the line view the moment it faults, and the stop appears in the event list at once.", "at": 17 },
+      { "title": "Give the stop its reason", "body": "The operator picks a category and a reason, adds a comment and saves. The stop is no longer unexplained.", "at": 28 },
+      { "title": "See what the order needs", "body": "Orders show status, progress and quantities against plan, so planning sees what is on track.", "at": 50 },
+      { "title": "Find the biggest losses", "body": "Events & Losses groups downtime by cause and by line, with the OEE breakdown beside it, so the largest loss comes first.", "at": 78 },
+      { "title": "Keep the reasons yours", "body": "Settings let the plant define its own categories and reasons, so every stop is recorded in its own language.", "at": 98 }
     ]
   },
 

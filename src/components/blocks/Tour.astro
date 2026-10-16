@@ -7,6 +7,8 @@ interface Props {
 }
 
 const { tour } = Astro.props.product;
+// Clock label for a chapter start, e.g. 78 -> 1:18
+const clock = (seconds: number) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 ---
 {tour && (
   <section id="how" class="section tour">
@@ -16,19 +18,58 @@ const { tour } = Astro.props.product;
         <p>{tour.intro}</p>
       </div>
       <figure class="frame">
-        <img src={url(tour.image.src)} alt={tour.image.alt} width="960" height="600" loading="lazy" />
+        <video class="clip" autoplay muted loop playsinline preload="metadata" poster={url(tour.video.poster)} aria-label={tour.video.alt}>
+          <source src={url(tour.video.src)} type="video/mp4" />
+        </video>
       </figure>
       <ol class="points">
         {tour.points.map((point) => (
           <li class="point">
-            <h3>{point.title}</h3>
-            <p>{point.body}</p>
+            <button type="button" class="chapter" data-at={point.at}>
+              <span class="time">{clock(point.at)}</span>
+              <span class="name">{point.title}</span>
+              <span class="body">{point.body}</span>
+            </button>
           </li>
         ))}
       </ol>
     </div>
   </section>
 )}
+
+<script>
+  // Chapters seek the clip; the current chapter follows playback
+  const video = document.querySelector<HTMLVideoElement>('.tour .clip');
+  const chapters = Array.from(document.querySelectorAll<HTMLButtonElement>('.tour .chapter'));
+
+  if (video && chapters.length) {
+    // Reduced motion: start paused on the poster; chapters still play on request
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      video.removeAttribute('autoplay');
+      video.pause();
+    }
+
+    chapters.forEach((chapter) =>
+      chapter.addEventListener('click', () => {
+        video.currentTime = Number(chapter.dataset.at);
+        void video.play();
+      }),
+    );
+
+    const markCurrent = () => {
+      let current = 0;
+      chapters.forEach((chapter, index) => {
+        if (video.currentTime >= Number(chapter.dataset.at)) current = index;
+      });
+      chapters.forEach((chapter, index) => {
+        if (index === current) chapter.setAttribute('aria-current', 'step');
+        else chapter.removeAttribute('aria-current');
+      });
+    };
+    video.addEventListener('timeupdate', markCurrent);
+    markCurrent();
+  }
+</script>
 
 <style>
   .tour {
@@ -71,7 +112,8 @@ const { tour } = Astro.props.product;
     background: var(--night);
   }
 
-  .frame img {
+  .clip {
+    display: block;
     width: 100%;
     height: auto;
   }
@@ -79,25 +121,48 @@ const { tour } = Astro.props.product;
   .points {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
-    gap: 28px 32px;
+    gap: 16px 20px;
     list-style: none;
   }
 
-  .point {
+  .chapter {
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding-top: 16px;
-    border-top: 3px solid var(--action);
+    padding: 16px 0 0;
+    border: 0;
+    border-top: 3px solid var(--line);
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    color: inherit;
   }
 
-  h3 {
+  .chapter[aria-current='step'] {
+    border-top-color: var(--action);
+  }
+
+  .chapter:focus-visible {
+    outline: 3px solid var(--action);
+    outline-offset: 4px;
+  }
+
+  .time {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--action);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .name {
     font-size: 18px;
     font-weight: 600;
     color: var(--ink);
   }
 
-  .point p {
+  .body {
     font-size: 15px;
     line-height: 1.6;
     color: var(--muted);
