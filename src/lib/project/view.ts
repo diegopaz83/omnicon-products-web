@@ -134,8 +134,9 @@ function renderCluster(s: State, ui: Ui): string {
     { label: t(ui, 'readLog'), value: String(d.logs), color: '#00DCFA' },
   ];
   const seg = (n: number) => `flex:${n} 1 0`;
+  const waitingLabel = t(ui, d.open === 1 ? 'waitingOne' : 'waitingMany');
   const waiting = d.open > 0
-    ? `<button type="button" class="pb-wait" data-act="waiting"><span class="pb-wait-count num">${d.open}</span>${t(ui, d.open === 1 ? 'waitingOne' : 'waitingMany')}${svg('down', 14, 2.4)}</button>`
+    ? `<button type="button" class="pb-wait tip" data-tip="${waitingLabel}" aria-label="${d.open} ${waitingLabel}" data-act="waiting"><span class="pb-wait-count num">${d.open}</span></button>`
     : '';
   return `
 <div class="pb-cluster">
@@ -390,19 +391,30 @@ export function qaRowState(s: State, q: Question, ui: Ui) {
 function qaRow(s: State, q: Question, ui: Ui): string {
   const r = qaRowState(s, q, ui);
   const n = q.num;
+  // Question text is always locked inline; the answer and activity lock once answered
+  const open = isOpen(q);
+  const menuOpen = s.menu === `q:${n}`;
   return `
-<tr class="pb-qa-row" data-num="${n}" style="${r.rowStyle}">
+<tr class="pb-qa-row${open ? '' : ' is-answered'}" data-num="${n}" style="${r.rowStyle}">
   <td class="pb-c-n num">${n}</td>
   <td class="pb-c-q">
-    <div class="pb-grow" data-value="${esc(q.question)} "><textarea class="pb-cell" rows="1" data-field="q" data-num="${n}" aria-label="${t(ui, 'questionAria', { num: n })}">${esc(q.question)}</textarea></div>
+    <div class="pb-grow" data-value="${esc(q.question)} "><textarea class="pb-cell" rows="1" readonly data-field="q" data-num="${n}" aria-label="${t(ui, 'questionAria', { num: n })}">${esc(q.question)}</textarea></div>
     <div class="pb-dates" data-dates>${r.dates}</div>
   </td>
   <td class="pb-c-a">
-    <div class="pb-grow" data-shadow data-value="${esc(r.shadow)} "><textarea class="pb-cell${r.answerClass}" rows="1" data-field="a" data-num="${n}" aria-label="${t(ui, 'answerAria', { num: n })}" placeholder="${t(ui, 'answerPlaceholder')}">${esc(q.answer)}</textarea></div>
+    <div class="pb-grow" data-shadow data-value="${esc(r.shadow)} "><textarea class="pb-cell${r.answerClass}" rows="1"${open ? '' : ' readonly'} data-field="a" data-num="${n}" aria-label="${t(ui, 'answerAria', { num: n })}" placeholder="${t(ui, 'answerPlaceholder')}">${esc(q.answer)}</textarea></div>
   </td>
-  <td class="pb-c-act"><span class="tip" data-tip="${esc(activityTip(s, q, ui))}"><select class="pb-act-pill" data-change="q-act" data-num="${n}" aria-label="${t(ui, 'activityForAria', { num: n })}" style="background-color:${q.activity ? '#E7EEFA' : '#F1F4F8'};color:${q.activity ? '#0A3FA8' : '#6B7D96'}">${activityOptions(s, ui, q.activity ?? '')}</select></span></td>
+  <td class="pb-c-act"><span class="tip" data-tip="${esc(activityTip(s, q, ui))}"><select class="pb-act-pill" data-change="q-act" data-num="${n}"${open ? '' : ' disabled'} aria-label="${t(ui, 'activityForAria', { num: n })}" style="background-color:${q.activity ? '#E7EEFA' : '#F1F4F8'};color:${q.activity ? '#0A3FA8' : '#6B7D96'}">${activityOptions(s, ui, q.activity ?? '')}</select></span></td>
   <td class="pb-c-st" data-status>${r.statusCell}</td>
-  <td class="pb-c-del"><button type="button" class="pb-row-del tip" data-tip="${t(ui, 'deleteRow')}" aria-label="${t(ui, 'deleteQuestionAria', { num: n })}" data-act="q-del" data-num="${n}">${svg('trash', 16)}</button></td>
+  <td class="pb-c-del">
+    <button type="button" class="pb-kebab tip${menuOpen ? ' is-open' : ''}" data-tip="${t(ui, 'actionsTip')}" data-act="q-menu" data-num="${n}" aria-label="${t(ui, 'questionActions', { num: n })}" aria-haspopup="menu" aria-expanded="${menuOpen}">${kebab(18)}</button>
+    ${menuOpen ? `
+    <div role="menu" class="pb-menu pb-menu-q" aria-label="${t(ui, 'questionActions', { num: n })}">
+      <button type="button" role="menuitem" class="pb-icon tip" data-tip="${t(ui, 'menuEditQuestion')}" aria-label="${t(ui, 'menuEditQuestion')}" data-act="q-edit" data-num="${n}">${svg('edit', 17)}</button>
+      <span class="pb-sep"></span>
+      <button type="button" role="menuitem" class="pb-icon tip is-danger" data-tip="${t(ui, 'menuDeleteQuestion')}" aria-label="${t(ui, 'menuDeleteQuestion')}" data-act="q-del" data-num="${n}">${svg('trash', 17)}</button>
+    </div>` : ''}
+  </td>
 </tr>`;
 }
 
@@ -513,6 +525,23 @@ function modalBody(s: State, ui: Ui, m: Modal): { kicker: string; title: string;
 ${linked}
 <div class="pb-logbook-head"><span class="pb-form-label">${t(ui, 'modalLogbook')}</span><button type="button" class="pb-icon tip" data-tip="${t(ui, 'menuAddLog')}" aria-label="${t(ui, 'menuAddLog')}" data-act="modal-to-log" data-id="${esc(a.id)}">${svg('plus', 16, 2.4)}</button></div>
 <div class="pb-logs">${logs || `<p class="pb-muted">${t(ui, 'modalNoEntries')}</p>`}</div>`,
+    };
+  }
+  if (m.kind === 'question') {
+    const q = s.questions.find((item) => item.num === m.num);
+    if (!q) return null;
+    return {
+      kicker: t(ui, 'questionKicker', { num: q.num }),
+      title: t(ui, 'titleEditQuestion'),
+      confirm: t(ui, 'saveChanges'),
+      confirmAct: 'modal-confirm',
+      body: `
+<label class="pb-form-label" for="pb-f-qtext">${t(ui, 'modalQuestion')}</label>
+<textarea id="pb-f-qtext" class="pb-input" rows="3" data-form="qText">${esc(s.form.qText)}</textarea>
+<label class="pb-form-label" for="pb-f-qanswer">${t(ui, 'modalAnswer')}</label>
+<textarea id="pb-f-qanswer" class="pb-input" rows="3" data-form="qAnswer" placeholder="${t(ui, 'answerPlaceholder')}">${esc(s.form.qAnswer)}</textarea>
+<label class="pb-form-label" for="pb-f-qact">${t(ui, 'colActivity')}</label>
+<select id="pb-f-qact" class="pb-input" data-form="qAct">${activityOptions(s, ui, s.form.qAct)}</select>`,
     };
   }
   if (m.kind === 'edit' || m.kind === 'new') {

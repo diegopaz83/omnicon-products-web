@@ -14,6 +14,7 @@ export type Modal =
   | { kind: 'edit'; id: string }
   | { kind: 'new' }
   | { kind: 'phase'; id: string | null }
+  | { kind: 'question'; num: number }
   | { kind: 'delete'; target: 'phase' | 'act'; id: string };
 
 export interface Form {
@@ -23,7 +24,23 @@ export interface Form {
   sys: Activity['systems'];
   pName: string;
   pGoal: string;
+  qText: string;
+  qAnswer: string;
+  // Activity id; empty means the whole project
+  qAct: string;
 }
+
+const blankForm = (): Form => ({
+  text: '',
+  name: '',
+  def: '',
+  sys: [],
+  pName: '',
+  pGoal: '',
+  qText: '',
+  qAnswer: '',
+  qAct: '',
+});
 
 export interface State {
   phases: Phase[];
@@ -82,7 +99,7 @@ export function createState(project: Project): State {
     node: project.architecture.find((n) => n.id === 'core')?.id ?? project.architecture[0]?.id ?? '',
     menu: null,
     modal: null,
-    form: { text: '', name: '', def: '', sys: [], pName: '', pGoal: '' },
+    form: blankForm(),
     entryType: 'Update',
     newQuestion: '',
     newActivity: '',
@@ -197,8 +214,11 @@ export function setForm(s: State, patch: Partial<Form>): State {
 }
 
 export function openModal(s: State, modal: Modal): State {
-  const form: Form = { text: '', name: '', def: '', sys: [], pName: '', pGoal: '' };
-  if (modal.kind === 'edit') {
+  const form = blankForm();
+  if (modal.kind === 'question') {
+    const q = s.questions.find((item) => item.num === modal.num);
+    if (q) Object.assign(form, { qText: q.question, qAnswer: q.answer, qAct: q.activity ?? '' });
+  } else if (modal.kind === 'edit') {
     const a = activityOf(s, modal.id);
     if (a) Object.assign(form, { name: a.name, def: a.definition, sys: [...a.systems] });
   } else if (modal.kind === 'new') {
@@ -347,9 +367,31 @@ export function deleteQuestion(s: State, num: number): State {
   const question = s.questions[index];
   return reorder({
     ...s,
+    menu: null,
     questions: s.questions.filter((q) => q.num !== num),
     undo: { question, index },
   });
+}
+
+// Edit text, answer and activity together; answer rules match patchQuestion
+export function saveQuestion(s: State, num: number): State {
+  const question = s.form.qText.trim();
+  if (!question) return { ...s, error: 'errQuestion' };
+  const answer = s.form.qAnswer.trim();
+  const activity = s.form.qAct || null;
+  const questions = s.questions.map((q) =>
+    q.num === num
+      ? {
+          ...q,
+          question,
+          answer,
+          activity,
+          answered: answer ? (q.answered ?? s.today) : null,
+          decision: answer ? q.decision : false,
+        }
+      : q,
+  );
+  return closeModal({ ...s, questions, menu: null });
 }
 
 export function restoreQuestion(s: State): State {

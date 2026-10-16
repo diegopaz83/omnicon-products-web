@@ -233,35 +233,25 @@
 .pb-wait {
   align-self: flex-start;
   margin-top: 4px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  padding: 7px 12px 7px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 181, 71, 0.55);
-  background: rgba(255, 181, 71, 0.12);
-  color: #ffd08a;
-}
-
-.pb-wait:hover {
-  background: rgba(255, 181, 71, 0.22);
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 .pb-wait-count {
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 13px;
   background: #ffb547;
   color: #3a1e00;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
+  box-shadow: 0 0 0 4px rgba(255, 181, 71, 0.18);
 }
 
 .pb-mix {
@@ -1253,6 +1243,36 @@
 .pb-cell.is-empty::placeholder {
   color: #a35a00;
   font-weight: 500;
+}
+
+/* Open answer: dashed amber edge invites typing */
+.pb-cell.is-empty:not([readonly]) {
+  border-style: dashed;
+  border-color: #ffb547;
+}
+
+/* Locked fields read as text */
+.pb-cell[readonly] {
+  cursor: default;
+}
+
+.pb-cell[readonly]:hover {
+  border-color: transparent;
+  background: transparent;
+}
+
+.pb-act-pill:disabled {
+  cursor: default;
+  opacity: 0.75;
+}
+
+.pb-c-del {
+  position: relative;
+}
+
+.pb-menu-q {
+  right: 8px;
+  top: 44px;
 }
 
 .pb-cell.is-new {

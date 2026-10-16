@@ -125,17 +125,24 @@ const payload = JSON.stringify({ project, ui }).replace(/</g, '\\u003c');
       commit(B.openModal(s, modal));
     };
 
-    // Update one question row in place, so the field being typed in keeps focus
-    const patchRow = (num: number) => {
+    // Update one question row in place, so the field being typed in keeps focus.
+    // lock: true once the field is left; an answered row then becomes read-only
+    const patchRow = (num: number, lock: boolean) => {
       const row = root.querySelector<HTMLTableRowElement>(`tr[data-num="${num}"]`);
       const q = s.questions.find((item) => item.num === num);
       if (!row || !q) return;
       const r = qaRowState(s, q, ui);
+      const open = B.isOpen(q);
       row.style.cssText = r.rowStyle;
+      row.classList.toggle('is-answered', !open);
       row.querySelector('[data-dates]')!.innerHTML = r.dates;
       row.querySelector('[data-status]')!.innerHTML = r.statusCell;
       row.querySelector<HTMLElement>('[data-shadow]')!.dataset.value = `${r.shadow} `;
-      row.querySelector('textarea[data-field="a"]')?.classList.toggle('is-empty', B.isOpen(q));
+      const answer = row.querySelector<HTMLTextAreaElement>('textarea[data-field="a"]');
+      answer?.classList.toggle('is-empty', open);
+      if (lock && answer) answer.readOnly = !open;
+      const activity = row.querySelector<HTMLSelectElement>('select[data-change="q-act"]');
+      if (lock && activity) activity.disabled = !open;
     };
 
     const confirmModal = () => {
@@ -144,6 +151,7 @@ const payload = JSON.stringify({ project, ui }).replace(/</g, '\\u003c');
       if (m.kind === 'log') commit(B.saveLog(s, m.id), ALL);
       else if (m.kind === 'edit' || m.kind === 'new') commit(B.saveActivity(s, m), ALL);
       else if (m.kind === 'phase') commit(B.savePhase(s, m.id), ALL);
+      else if (m.kind === 'question') commit(B.saveQuestion(s, m.num), ALL);
     };
 
     const confirmDelete = () => {
@@ -242,6 +250,12 @@ const payload = JSON.stringify({ project, ui }).replace(/</g, '\\u003c');
         case 'q-dec':
           commit(B.toggleDecision(s, num), ['qaFilters', 'qaBody']);
           break;
+        case 'q-menu':
+          commit(B.toggleMenu(s, `q:${num}`), ['qaBody']);
+          break;
+        case 'q-edit':
+          open({ kind: 'question', num });
+          break;
         case 'q-del':
           commit(B.deleteQuestion(s, num), ALL);
           break;
@@ -264,23 +278,25 @@ const payload = JSON.stringify({ project, ui }).replace(/</g, '\\u003c');
       if (el.dataset.field === 'new') {
         s = B.setNewQuestion(s, el.value);
         el.parentElement!.dataset.value = `${el.value} `;
-      } else if (el.dataset.field === 'q') {
-        s = B.patchQuestion(s, num, { question: el.value });
-        el.parentElement!.dataset.value = `${el.value} `;
       } else if (el.dataset.field === 'a') {
         s = B.patchQuestion(s, num, { answer: el.value });
-        patchRow(num);
+        patchRow(num, false);
         // Open count feeds the header, the activity chips and the filter badges
         render(['cluster', 'activities', 'qaFilters']);
       }
     });
 
     root.addEventListener('change', (event) => {
-      const el = event.target as HTMLSelectElement;
-      if (el.dataset.change === 'q-act') {
+      const el = event.target as HTMLSelectElement & HTMLTextAreaElement;
+      if (el.dataset.form) {
+        s = B.setForm(s, { [el.dataset.form]: el.value } as Partial<B.Form>);
+      } else if (el.dataset.change === 'q-act') {
         commit(B.patchQuestion(s, Number(el.dataset.num), { activity: el.value || null }), ['cluster', 'activities', 'qaBody']);
       } else if (el.dataset.change === 'new-act') {
         s = B.setNewActivity(s, el.value);
+      } else if (el.dataset.field === 'a') {
+        // Leaving the answer field locks an answered row
+        patchRow(Number(el.dataset.num), true);
       }
     });
 
