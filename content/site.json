@@ -31,22 +31,28 @@
       "slug": null,
       "status": "in-development",
       "statusLabel": "In development",
+      "category": "Energy",
       "name": "Energy & utilities",
-      "summary": "Know where your kilowatt-hours go, by line and by part, and when demand peaks."
+      "summary": "Know where your kilowatt-hours go, by line and by part, and when demand peaks.",
+      "image": { "src": "products/mes/control-room.jpg", "alt": "Control room screens showing plant data" }
     },
     {
       "slug": null,
       "status": "planned",
       "statusLabel": "Planned",
+      "category": "Maintenance",
       "name": "Predictive maintenance",
-      "summary": "See the signs of a failing machine before it stops the line."
+      "summary": "See the signs of a failing machine before it stops the line.",
+      "image": { "src": "products/mes/robot-engineer.jpg", "alt": "Engineer beside an industrial robot" }
     },
     {
       "slug": null,
       "status": "planned",
       "statusLabel": "Planned",
+      "category": "Quality",
       "name": "Quality & traceability",
-      "summary": "Find where scrap starts and trace every batch back to the machine that made it."
+      "summary": "Find where scrap starts and trace every batch back to the machine that made it.",
+      "image": { "src": "site/team.jpg", "alt": "Team planning a project around a whiteboard" }
     }
   ],
   "about": {

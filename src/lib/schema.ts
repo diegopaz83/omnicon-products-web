@@ -114,8 +114,10 @@ const ProductCardSchema = z.discriminatedUnion('status', [
     status: z.enum(['in-development', 'planned']),
     slug: z.null(),
     statusLabel: text,
+    category: text.optional(),
     name: text,
     summary: text,
+    image: asset.optional(),
   }),
 ]);
 
