@@ -40,6 +40,9 @@ const hasProjectView = (slug: string) => !isPublicBuild && getProject(slug) !== 
               <div class="tags">
                 <span class="status">{card.statusLabel}</span>
                 <span class="category">{card.category}</span>
+                {hasProjectView(card.slug) && (
+                  <a class="internal-tag" href={url(`products/${card.slug}/project/`)}>{site.ui.projectView}</a>
+                )}
               </div>
               <h2>{card.name}</h2>
               <p class="summary">{card.summary}</p>
@@ -50,11 +53,6 @@ const hasProjectView = (slug: string) => !isPublicBuild && getProject(slug) !== 
                 <a class="btn btn-action" href={url(`products/${card.slug}/`)}>
                   {fill(site.ui.explore, { name: card.name })}
                 </a>
-                {hasProjectView(card.slug) && (
-                  <a class="btn btn-soft" href={url(`products/${card.slug}/project/`)}>
-                    {site.ui.projectView}
-                  </a>
-                )}
               </div>
             </div>
             <div class="visual">
@@ -230,15 +228,18 @@ const hasProjectView = (slug: string) => !isPublicBuild && getProject(slug) !== 
     gap: 32px;
   }
 
-  .btn-soft {
-    background: var(--chip);
-    color: var(--deep);
-    border-color: transparent;
+  .internal-tag {
+    padding: 5px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
   }
 
-  .btn-soft:hover {
-    color: var(--night);
-    background: #c4ddf7;
+  .internal-tag:hover {
+    color: var(--ink);
+    border-color: var(--muted);
   }
 
   .tile {
