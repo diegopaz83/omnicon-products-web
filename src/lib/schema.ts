@@ -39,6 +39,37 @@ const asset = z.strictObject({ src: text, alt: text });
 const link = z.strictObject({ label: text, href: text });
 const count = z.number().int().nonnegative();
 
+// Copy keys of the internal project page; every key must exist in content/site.json ui.project
+export const PROJECT_UI_KEYS = [
+  'kicker', 'heading', 'subtitle', 'synced', 'gaugeLabel', 'gaugeAria', 'gaugeNote',
+  'healthLabel', 'towerAria', 'healthAtRisk', 'healthOnTrack', 'atRiskOne', 'atRiskMany', 'onTrackReason',
+  'waitingOne', 'waitingMany', 'activityStatus', 'activitiesCount', 'mixAria',
+  'statusComplete', 'statusProgress', 'statusIdle',
+  'readPhases', 'readActivities', 'readOpen', 'readLog',
+  'phasesTitle', 'phasesIntro', 'addPhase', 'phaseLabel', 'phaseActions', 'phaseActionsAria', 'phaseShowAria',
+  'phaseCount', 'phaseEmpty', 'menuEditPhase', 'menuMoveEarlier', 'menuMoveLater', 'menuDeletePhase',
+  'activitiesTitle', 'activitiesAria', 'selectHint', 'addActivity', 'cycleLabel', 'openOne', 'openMany',
+  'logOne', 'logMany', 'actionsTip', 'actionsAria', 'menuView', 'menuAddLog', 'menuRaise', 'menuEditActivity',
+  'menuReset', 'menuDeleteActivity', 'noActivities',
+  'archTitle', 'archIntro', 'layerSuffix', 'keyObjects', 'talksTo',
+  'qaTitle', 'qaIntro', 'filterAria', 'filterAll', 'filterOpen', 'filterDecisions',
+  'colNumber', 'colQuestion', 'colAnswer', 'colActivity', 'colStatus', 'colDelete',
+  'asked', 'answered', 'answerPlaceholder', 'statusOpen', 'statusAnswered',
+  'decisionOff', 'decisionOn', 'decisionLocked', 'wholeProject', 'wholeProjectLong', 'deleteRow',
+  'deleteQuestionAria', 'questionAria', 'answerAria', 'activityForAria', 'newQuestionAria', 'newActivityAria',
+  'newQuestionPlaceholder', 'newHint', 'emptyAll', 'emptyOpen', 'emptyDecisions',
+  'undoText', 'undo', 'dismiss',
+  'modalClose', 'modalDefinition', 'modalNoDefinition', 'modalLinked', 'modalLogbook', 'modalNoEntries',
+  'modalEntryType', 'modalEntry', 'modalEntryPlaceholder', 'modalActivityName', 'modalDefinitionPlaceholder',
+  'modalSystems', 'modalPhaseName', 'modalGoal', 'modalGoalPlaceholder', 'modalKickerPhases',
+  'modalKickerActivities', 'phaseKicker', 'titleLog', 'titleNewActivity', 'titleEditActivity', 'titleEditPhase',
+  'titleNewPhase', 'titleDeletePhase', 'titleDeleteActivity', 'saveEntry', 'createActivity', 'saveChanges',
+  'savePhase', 'createPhase', 'deletePhaseButton', 'deleteActivityButton', 'deletePhaseText',
+  'deleteActivityText', 'errEntry', 'errName', 'errPhase',
+  'systemPlc', 'systemOptix', 'systemNodered', 'systemInflux', 'systemPython', 'systemSql',
+  'logDefinition', 'logUpdate', 'logDecision', 'logBlocker',
+] as const;
+
 const UiSchema = z.strictObject({
   skipToContent: text,
   homeAria: text,
@@ -77,25 +108,7 @@ const UiSchema = z.strictObject({
     restart: text,
     steps: z.array(text).length(4),
   }),
-  project: z.strictObject({
-    meta: text,
-    completed: text,
-    nextStep: text,
-    openQuestions: text,
-    tagsMapped: text,
-    progress: text,
-    all: text,
-    done: text,
-    pending: text,
-    inScope: text,
-    outOfScope: text,
-    draftNote: text,
-    architecture: text,
-    decisions: text,
-    colNumber: text,
-    colQuestion: text,
-    colRecommendation: text,
-  }),
+  project: z.strictObject(Object.fromEntries(PROJECT_UI_KEYS.map((key) => [key, text]))),
 });
 
 const ProductCardSchema = z.discriminatedUnion('status', [
@@ -198,8 +211,6 @@ const DemoSchema = z.strictObject({
   v2: z.strictObject({ engine: text, reference: text }).optional(),
 });
 
-const ProjectStatus = z.enum(['done', 'next', 'in-progress', 'not-started', 'blocked']);
-
 export const ProductSchema = z
   .strictObject({
     slug: text,
@@ -287,39 +298,83 @@ export const ProductSchema = z
     }
   });
 
+const SystemKey = z.enum(['plc', 'optix', 'nodered', 'influx', 'python', 'sql']);
+const ActivityStatus = z.enum(['idle', 'progress', 'complete']);
+const LogType = z.enum(['Definition', 'Update', 'Decision', 'Blocker']);
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'expected YYYY-MM-DD');
+
 export const ProjectSchema = z
   .strictObject({
     slug: text,
     internal: z.literal(true),
     title: text,
-    meta: z.strictObject({ designVersion: text, pilot: text, updated: text }),
-    summary: z.strictObject({ nextStep: text, openQuestions: count, tagsMapped: count }),
-    progress: z.array(
-      z.strictObject({ code: text, name: text, detail: text, status: ProjectStatus }),
+    meta: z.strictObject({ designVersion: text, pilot: text, updated: isoDate, synced: text }),
+    phases: z.array(z.strictObject({ id: text, name: text, goal: text })).min(1),
+    activities: z.array(
+      z.strictObject({
+        id: text,
+        phase: text,
+        name: text,
+        status: ActivityStatus,
+        systems: z.array(SystemKey),
+        definition: z.string(),
+        log: z.array(z.strictObject({ date: isoDate, type: LogType, text })),
+      }),
     ),
-    statusLabels: z.strictObject({
-      done: text,
-      next: text,
-      'in-progress': text,
-      'not-started': text,
-      blocked: text,
-    }),
-    scope: z.strictObject({ in: z.array(text), out: z.array(text), outDraft: z.boolean() }),
-    architecture: z.array(z.strictObject({ name: text, body: text })),
-    decisions: z.array(z.strictObject({ id: text, text: text })),
+    // Question numbers are the row keys; activity null means the whole project
     questions: z.array(
-      z.strictObject({ id: text, question: text, recommendation: text, status: text }),
+      z.strictObject({
+        num: count,
+        question: text,
+        answer: z.string(),
+        activity: text.nullable(),
+        decision: z.boolean(),
+        asked: isoDate,
+        answered: isoDate.nullable(),
+      }),
+    ),
+    architecture: z.array(
+      z.strictObject({
+        id: z.enum(['field', 'edge', 'historian', 'etl', 'core', 'ops']),
+        system: SystemKey,
+        layer: text,
+        name: text,
+        role: text,
+        cadence: text,
+        tech: text,
+        link: z.string(),
+        linkFull: text,
+        detail: text,
+        objects: z.array(text).min(1),
+      }),
     ),
   })
   .superRefine((project, ctx) => {
-    const open = project.questions.filter((q) => q.status === 'open').length;
-    if (project.summary.openQuestions !== open) {
-      ctx.addIssue({
-        code: 'custom',
-        message: `summary.openQuestions is ${project.summary.openQuestions} but ${open} questions are open`,
-        path: ['summary', 'openQuestions'],
-      });
-    }
+    const phases = new Set(project.phases.map((phase) => phase.id));
+    const activities = new Set(project.activities.map((activity) => activity.id));
+    const nums = new Set<number>();
+    project.activities.forEach((activity, index) => {
+      if (!phases.has(activity.phase)) {
+        ctx.addIssue({ code: 'custom', message: `unknown phase "${activity.phase}"`, path: ['activities', index, 'phase'] });
+      }
+    });
+    project.questions.forEach((question, index) => {
+      const answered = question.answer.trim() !== '';
+      const path = ['questions', index];
+      if (nums.has(question.num)) {
+        ctx.addIssue({ code: 'custom', message: `duplicate question num ${question.num}`, path });
+      }
+      nums.add(question.num);
+      if (question.activity !== null && !activities.has(question.activity)) {
+        ctx.addIssue({ code: 'custom', message: `unknown activity "${question.activity}"`, path: [...path, 'activity'] });
+      }
+      if (answered !== (question.answered !== null)) {
+        ctx.addIssue({ code: 'custom', message: 'answered date must be set exactly when the answer is not empty', path });
+      }
+      if (question.decision && !answered) {
+        ctx.addIssue({ code: 'custom', message: 'a decision needs an answer', path });
+      }
+    });
   });
 
 export type Site = z.infer<typeof SiteSchema>;

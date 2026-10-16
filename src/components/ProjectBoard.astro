@@ -1,0 +1,312 @@
+---
+import '../styles/project-board.css';
+import { createState } from '../lib/project/board';
+import { regions, type Ui } from '../lib/project/view';
+import type { Project } from '../lib/schema';
+import { url } from '../lib/paths';
+import { fill } from '../lib/text';
+
+interface Props {
+  project: Project;
+  ui: Ui;
+  slug: string;
+  logo: { src: string; alt: string };
+  homeAria: string;
+  viewsNavAria: string;
+  productTab: string;
+  projectTab: string;
+}
+
+const { project, ui, slug, logo, homeAria, viewsNavAria, productTab, projectTab } = Astro.props;
+// First paint matches the client render: both use the same state and templates
+const initial = regions(createState(project), ui, project.architecture);
+// Escape "<" so the JSON cannot close the script tag
+const payload = JSON.stringify({ project, ui }).replace(/</g, '\\u003c');
+---
+<div class="pb" data-board>
+  <header class="pb-top grid-bg">
+    <div class="pb-wrap">
+      <div class="pb-bar">
+        <div class="pb-brand">
+          <a href={url()} aria-label={homeAria} class="pb-logo"><img src={url(logo.src)} alt={logo.alt} height="26" /></a>
+          <span class="pb-sep-v" aria-hidden="true"></span>
+          <span class="pb-kicker">{ui.kicker}</span>
+        </div>
+        <div class="pb-bar-right">
+          <span class="pb-synced"><i aria-hidden="true"></i>{fill(ui.synced, { synced: project.meta.synced })}</span>
+          <nav class="pb-views" aria-label={viewsNavAria}>
+            <a href={url(`products/${slug}/`)}>{productTab}</a>
+            <a href={url(`products/${slug}/project/`)} aria-current="page">{projectTab}</a>
+          </nav>
+        </div>
+      </div>
+      <div class="pb-title">
+        <h1>{ui.heading}</h1>
+        <p>{fill(ui.subtitle, { pilot: project.meta.pilot })}</p>
+      </div>
+      <div class="pb-head-cluster" data-region="cluster" set:html={initial.cluster}></div>
+    </div>
+  </header>
+
+  <main id="main" class="pb-main">
+    <div class="pb-wrap">
+      <section class="pb-block-section">
+        <div data-region="phases" set:html={initial.phases}></div>
+        <div data-region="activities" set:html={initial.activities}></div>
+      </section>
+    </div>
+
+    <section class="pb-arch grid-bg">
+      <div class="pb-wrap" data-region="arch" set:html={initial.arch}></div>
+    </section>
+
+    <section id="qa" class="pb-qa-section">
+      <div class="pb-wrap">
+        <div class="pb-qa-head">
+          <div class="pb-qa-copy">
+            <h2>{ui.qaTitle}</h2>
+            <p>{ui.qaIntro}</p>
+          </div>
+          <div class="pb-filters" role="group" aria-label={ui.filterAria} data-region="qaFilters" set:html={initial.qaFilters}></div>
+        </div>
+        <div class="pb-qa-card">
+          <div class="pb-qa-scroll" data-region="qaBody" set:html={initial.qaBody}></div>
+        </div>
+        <div class="pb-undo-wrap" data-region="undo" set:html={initial.undo}></div>
+      </div>
+    </section>
+  </main>
+
+  <div data-region="modal" set:html={initial.modal}></div>
+  <script type="application/json" id="pb-data" set:html={payload}></script>
+</div>
+
+<script>
+  import * as B from '../lib/project/board';
+  import { regions, qaRowState, type Region, type Ui } from '../lib/project/view';
+  import type { Project } from '../lib/schema';
+
+  const root = document.querySelector<HTMLElement>('[data-board]');
+  const source = document.getElementById('pb-data')?.textContent;
+
+  if (root && source) {
+    const { project, ui } = JSON.parse(source) as { project: Project; ui: Ui };
+    const ALL: Region[] = ['cluster', 'phases', 'activities', 'arch', 'qaFilters', 'qaBody', 'undo', 'modal'];
+    let s = B.createState(project);
+    let focusNew = false;
+    let focusModal = false;
+
+    // Refresh named regions; typing never calls this, so focus stays in the field
+    const render = (names: Region[]) => {
+      const html = regions(s, ui, project.architecture);
+      for (const name of names) {
+        root.querySelector(`[data-region="${name}"]`)!.innerHTML = html[name];
+      }
+      if (focusNew) {
+        focusNew = false;
+        const field = document.getElementById('pb-qa-new');
+        field?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        field?.focus({ preventScroll: true });
+      }
+      if (focusModal) {
+        focusModal = false;
+        const dialog = root.querySelector<HTMLElement>('.pb-dialog');
+        (dialog?.querySelector<HTMLElement>('[data-form]') ?? dialog?.querySelector<HTMLElement>('button'))?.focus();
+      }
+    };
+
+    const commit = (next: B.State, names: Region[] = ALL) => {
+      s = next;
+      render(names);
+    };
+
+    const open = (modal: B.Modal) => {
+      focusModal = true;
+      commit(B.openModal(s, modal));
+    };
+
+    // Update one question row in place, so the field being typed in keeps focus
+    const patchRow = (num: number) => {
+      const row = root.querySelector<HTMLTableRowElement>(`tr[data-num="${num}"]`);
+      const q = s.questions.find((item) => item.num === num);
+      if (!row || !q) return;
+      const r = qaRowState(s, q, ui);
+      row.style.cssText = r.rowStyle;
+      row.querySelector('[data-dates]')!.innerHTML = r.dates;
+      row.querySelector('[data-status]')!.innerHTML = r.statusCell;
+      row.querySelector<HTMLElement>('[data-shadow]')!.dataset.value = `${r.shadow} `;
+      row.querySelector('textarea[data-field="a"]')?.classList.toggle('is-empty', B.isOpen(q));
+    };
+
+    const confirmModal = () => {
+      const m = s.modal;
+      if (!m) return;
+      if (m.kind === 'log') commit(B.saveLog(s, m.id), ALL);
+      else if (m.kind === 'edit' || m.kind === 'new') commit(B.saveActivity(s, m), ALL);
+      else if (m.kind === 'phase') commit(B.savePhase(s, m.id), ALL);
+    };
+
+    const confirmDelete = () => {
+      const m = s.modal;
+      if (!m || m.kind !== 'delete') return;
+      commit(m.target === 'phase' ? B.deletePhase(s, m.id) : B.deleteActivity(s, m.id), ALL);
+    };
+
+    root.addEventListener('click', (event) => {
+      const el = (event.target as Element).closest<HTMLElement>('[data-act]');
+      if (!el || !root.contains(el)) return;
+      const id = el.dataset.id ?? '';
+      const num = Number(el.dataset.num);
+      switch (el.dataset.act) {
+        case 'waiting':
+          commit(B.setFilter(s, 'open'), ['qaFilters', 'qaBody']);
+          document.getElementById('qa')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          break;
+        case 'filter':
+          commit(B.setFilter(s, el.dataset.value as B.State['filter']), ['qaFilters', 'qaBody']);
+          break;
+        case 'phase-pick':
+          commit(B.selectPhase(s, id), ['phases', 'activities']);
+          break;
+        case 'phase-menu':
+          commit(B.toggleMenu(s, `p:${id}`), ['phases']);
+          break;
+        case 'phase-move':
+          commit(B.movePhase(s, id, Number(el.dataset.dir)), ['phases']);
+          break;
+        case 'phase-edit':
+          open({ kind: 'phase', id });
+          break;
+        case 'phase-delete':
+          open({ kind: 'delete', target: 'phase', id });
+          break;
+        case 'phase-add':
+          open({ kind: 'phase', id: null });
+          break;
+        case 'node':
+          commit(B.selectNode(s, id), ['arch']);
+          break;
+        case 'act-cycle':
+          commit(B.cycleActivity(s, id), ['cluster', 'phases', 'activities']);
+          break;
+        case 'act-menu':
+          commit(B.toggleMenu(s, id), ['activities']);
+          break;
+        case 'act-view':
+          open({ kind: 'view', id });
+          break;
+        case 'act-log':
+          open({ kind: 'log', id });
+          break;
+        case 'act-raise':
+          focusNew = true;
+          commit(B.raiseQuestion(s, id), ALL);
+          break;
+        case 'act-edit':
+          open({ kind: 'edit', id });
+          break;
+        case 'act-reset':
+          commit(B.resetActivity(s, id), ['cluster', 'phases', 'activities']);
+          break;
+        case 'act-delete':
+          open({ kind: 'delete', target: 'act', id });
+          break;
+        case 'act-add':
+          open({ kind: 'new' });
+          break;
+        case 'modal-close':
+          commit(B.closeModal(s), ['modal']);
+          break;
+        case 'modal-confirm':
+          confirmModal();
+          break;
+        case 'modal-delete':
+          confirmDelete();
+          break;
+        case 'modal-cycle':
+          commit(B.cycleActivity(s, id), ALL);
+          break;
+        case 'modal-to-log':
+          open({ kind: 'log', id });
+          break;
+        case 'modal-type':
+          commit({ ...s, entryType: el.dataset.value as B.LogType }, ['modal']);
+          break;
+        case 'modal-sys': {
+          const key = el.dataset.value as B.Form['sys'][number];
+          const current = s.form.sys;
+          const sys = current.includes(key) ? current.filter((k) => k !== key) : [...current, key];
+          commit(B.setForm(s, { sys }), ['modal']);
+          break;
+        }
+        case 'q-dec':
+          commit(B.toggleDecision(s, num), ['qaFilters', 'qaBody']);
+          break;
+        case 'q-del':
+          commit(B.deleteQuestion(s, num), ALL);
+          break;
+        case 'undo':
+          commit(B.restoreQuestion(s), ALL);
+          break;
+        case 'undo-dismiss':
+          commit(B.dismissUndo(s), ['undo']);
+          break;
+      }
+    });
+
+    root.addEventListener('input', (event) => {
+      const el = event.target as HTMLInputElement | HTMLTextAreaElement;
+      if (el.dataset.form) {
+        s = B.setForm(s, { [el.dataset.form]: el.value } as Partial<B.Form>);
+        return;
+      }
+      const num = Number(el.dataset.num);
+      if (el.dataset.field === 'new') {
+        s = B.setNewQuestion(s, el.value);
+        el.parentElement!.dataset.value = `${el.value} `;
+      } else if (el.dataset.field === 'q') {
+        s = B.patchQuestion(s, num, { question: el.value });
+        el.parentElement!.dataset.value = `${el.value} `;
+      } else if (el.dataset.field === 'a') {
+        s = B.patchQuestion(s, num, { answer: el.value });
+        patchRow(num);
+        // Open count feeds the header, the activity chips and the filter badges
+        render(['cluster', 'activities', 'qaFilters']);
+      }
+    });
+
+    root.addEventListener('change', (event) => {
+      const el = event.target as HTMLSelectElement;
+      if (el.dataset.change === 'q-act') {
+        commit(B.patchQuestion(s, Number(el.dataset.num), { activity: el.value || null }), ['cluster', 'activities', 'qaBody']);
+      } else if (el.dataset.change === 'new-act') {
+        s = B.setNewActivity(s, el.value);
+      }
+    });
+
+    root.addEventListener('keydown', (event) => {
+      const el = event.target as HTMLElement;
+      if (el.id === 'pb-qa-new' && event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+        event.preventDefault();
+        const question = s.newQuestion.trim();
+        if (!question) return;
+        focusNew = true;
+        commit(B.addQuestions(s, [{ question, answer: '' }]), ALL);
+      }
+    });
+
+    root.addEventListener('paste', (event) => {
+      const el = event.target as HTMLElement;
+      if (el.id !== 'pb-qa-new') return;
+      const rows = B.parsePaste(event.clipboardData?.getData('text') ?? '');
+      if (!rows) return;
+      event.preventDefault();
+      focusNew = true;
+      commit(B.addQuestions(s, rows.map((row) => ({ question: row.question, answer: row.answer }))), ALL);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && s.modal) commit(B.closeModal(s), ['modal']);
+    });
+  }
+</script>

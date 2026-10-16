@@ -106,7 +106,7 @@ v2 (next): replace the 2D machines with a Three.js scene based on `design/refere
 content/
   site.json                       hub copy, nav, footer, product list
   products/<slug>/product.json    public product page (blocks)
-  products/<slug>/project.json    internal: summary, progress, scope, architecture, decisions, questions
+  products/<slug>/project.json    internal: meta, phases, activities with logbook, questions and decisions, architecture nodes (see design/project-status-v2.md)
 ```
 
 Read all content through `src/lib/data.ts` (`getSite()`, `getProduct(slug)`, `getProject(slug)`). Validate with Zod schemas in `src/lib/schema.ts`; the build fails on invalid content.
@@ -144,6 +144,6 @@ public/products/mes/   hero poster, motion video, photos, deck PDF
 | 1 | Final motion video file | Diego |
 | 2 | Contact email for "Request a demo" | Omnicon |
 | 3 | Names of future products for the hub | Omnicon |
-| 4 | Confirm out-of-scope list in `project.json` | Diego |
+| 4 | Out-of-scope list: removed from the project page in v2 (2026-10-16). Say if it should return | Diego |
 | 5 | Hub copy "Every product starts on a real line" (draft) | Diego |
 | 6 | Custom domain | Later |
