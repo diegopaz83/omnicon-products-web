@@ -46,6 +46,8 @@ export interface State {
   phases: Phase[];
   activities: Activity[];
   questions: Question[];
+  // Unsaved answer text per open question, keyed by question number
+  drafts: Record<number, string>;
   // Question numbers in display order
   order: number[];
   filter: 'all' | 'open' | 'dec';
@@ -93,6 +95,7 @@ export function createState(project: Project): State {
     phases: project.phases.map((p) => ({ ...p })),
     activities: project.activities.map((a) => ({ ...a, systems: [...a.systems], log: [...a.log] })),
     questions: project.questions.map((q) => ({ ...q })),
+    drafts: {},
     order: [],
     filter: 'all',
     phase,
@@ -322,6 +325,29 @@ export function setNewActivity(s: State, id: string): State {
   return { ...s, newActivity: id };
 }
 
+// Text shown in an answer field: the draft if one exists, else the saved answer
+export function draftOf(s: State, q: Question): string {
+  return s.drafts[q.num] ?? q.answer;
+}
+
+// Keep typing local: a draft does not change status until it is submitted
+export function setDraft(s: State, num: number, text: string): State {
+  return { ...s, drafts: { ...s.drafts, [num]: text } };
+}
+
+function withoutDraft(s: State, num: number): Record<number, string> {
+  const drafts = { ...s.drafts };
+  delete drafts[num];
+  return drafts;
+}
+
+// Save the draft as the answer; blank drafts are ignored
+export function submitAnswer(s: State, num: number): State {
+  const draft = s.drafts[num];
+  if (draft === undefined || draft.trim() === '') return s;
+  return { ...patchQuestion(s, num, { answer: draft.trim() }), drafts: withoutDraft(s, num), menu: null };
+}
+
 // Answer changes derive status: empty answer means Open, and it clears the decision
 export function patchQuestion(s: State, num: number, patch: Partial<Question>): State {
   const questions = s.questions.map((q) => {
@@ -368,6 +394,7 @@ export function deleteQuestion(s: State, num: number): State {
   return reorder({
     ...s,
     menu: null,
+    drafts: withoutDraft(s, num),
     questions: s.questions.filter((q) => q.num !== num),
     undo: { question, index },
   });
@@ -391,7 +418,7 @@ export function saveQuestion(s: State, num: number): State {
         }
       : q,
   );
-  return closeModal({ ...s, questions, menu: null });
+  return closeModal({ ...s, questions, menu: null, drafts: withoutDraft(s, num) });
 }
 
 export function restoreQuestion(s: State): State {

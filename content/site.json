@@ -233,6 +233,7 @@
       "modalQuestion": "Question",
       "modalAnswer": "Answer",
       "errQuestion": "Write the question before saving.",
+      "submitAnswer": "Submit answer",
       "menuEditQuestion": "Edit question",
       "menuDeleteQuestion": "Delete question",
       "questionActions": "Actions for question {num}",

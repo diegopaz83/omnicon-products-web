@@ -63,7 +63,7 @@ export const PROJECT_UI_KEYS = [
   'modalEntryType', 'modalEntry', 'modalEntryPlaceholder', 'modalActivityName', 'modalDefinitionPlaceholder',
   'modalSystems', 'modalPhaseName', 'modalGoal', 'modalGoalPlaceholder', 'modalKickerPhases',
   'modalKickerActivities', 'phaseKicker', 'questionKicker', 'titleEditQuestion', 'modalQuestion', 'modalAnswer',
-  'errQuestion', 'menuEditQuestion', 'menuDeleteQuestion', 'questionActions', 'titleLog', 'titleNewActivity', 'titleEditActivity', 'titleEditPhase',
+  'errQuestion', 'submitAnswer', 'menuEditQuestion', 'menuDeleteQuestion', 'questionActions', 'titleLog', 'titleNewActivity', 'titleEditActivity', 'titleEditPhase',
   'titleNewPhase', 'titleDeletePhase', 'titleDeleteActivity', 'saveEntry', 'createActivity', 'saveChanges',
   'savePhase', 'createPhase', 'deletePhaseButton', 'deleteActivityButton', 'deletePhaseText',
   'deleteActivityText', 'errEntry', 'errName', 'errPhase',

@@ -1,6 +1,7 @@
 import {
   activityOf,
   derive,
+  draftOf,
   isOpen,
   LOG_TYPES,
   phaseOf,
@@ -373,6 +374,8 @@ export function qaRowState(s: State, q: Question, ui: Ui) {
   const open = isOpen(q);
   const decided = q.decision && !open;
   const edge = open ? '#FFB547' : decided ? '#3530A5' : '#2ED18B';
+  // Open rows show the draft; answered rows show the saved answer
+  const text = open ? draftOf(s, q) : q.answer;
   const answered = q.answered && !open ? ` · ${t(ui, 'answered', { date: fmtDate(q.answered) })}` : '';
   const st = open
     ? { bg: '#FFE3C2', fg: '#8A4500', dot: '#FFB547', label: t(ui, 'statusOpen') }
@@ -382,8 +385,10 @@ export function qaRowState(s: State, q: Question, ui: Ui) {
     rowStyle: `background:${open ? '#FFF9F1' : '#FFFFFF'};box-shadow:inset 3px 0 0 ${edge}`,
     dates: `${t(ui, 'asked', { date: fmtDate(q.asked) })}${answered}`,
     // Raw text: the client sets it as a data attribute value
-    shadow: open ? ui.answerPlaceholder : q.answer,
-    answerClass: open ? ' is-empty' : '',
+    text,
+    shadow: text.trim() === '' && open ? ui.answerPlaceholder : text,
+    answerClass: open && text.trim() === '' ? ' is-empty' : '',
+    showSubmit: open && text.trim() !== '',
     statusCell: `<div class="pb-status-cell"><span class="pb-status" style="background:${st.bg};color:${st.fg}"><i style="background:${st.dot}"></i>${st.label}</span><button type="button" class="pb-dec tip${decided ? ' is-on' : ''}" data-tip="${decTip}" aria-label="${decTip}" data-act="q-dec" data-num="${q.num}" aria-pressed="${decided}" aria-disabled="${open}" style="opacity:${open ? 0.45 : 1}">${svg('check', 13, 3)}</button></div>`,
   };
 }
@@ -402,7 +407,10 @@ function qaRow(s: State, q: Question, ui: Ui): string {
     <div class="pb-dates" data-dates>${r.dates}</div>
   </td>
   <td class="pb-c-a">
-    <div class="pb-grow" data-shadow data-value="${esc(r.shadow)} "><textarea class="pb-cell${r.answerClass}" rows="1"${open ? '' : ' readonly'} data-field="a" data-num="${n}" aria-label="${t(ui, 'answerAria', { num: n })}" placeholder="${t(ui, 'answerPlaceholder')}">${esc(q.answer)}</textarea></div>
+    <div class="pb-answer">
+      <div class="pb-grow" data-shadow data-value="${esc(r.shadow)} "><textarea class="pb-cell${r.answerClass}" rows="1"${open ? '' : ' readonly'} data-field="a" data-num="${n}" aria-label="${t(ui, 'answerAria', { num: n })}" placeholder="${t(ui, 'answerPlaceholder')}">${esc(r.text)}</textarea></div>
+      <button type="button" class="pb-submit tip" data-tip="${t(ui, 'submitAnswer')}" aria-label="${t(ui, 'submitAnswer')}" data-act="q-submit" data-num="${n}"${r.showSubmit ? '' : ' hidden'}>${svg('check', 16, 2.6)}</button>
+    </div>
   </td>
   <td class="pb-c-act"><span class="tip" data-tip="${esc(activityTip(s, q, ui))}"><select class="pb-act-pill" data-change="q-act" data-num="${n}"${open ? '' : ' disabled'} aria-label="${t(ui, 'activityForAria', { num: n })}" style="background-color:${q.activity ? '#E7EEFA' : '#F1F4F8'};color:${q.activity ? '#0A3FA8' : '#6B7D96'}">${activityOptions(s, ui, q.activity ?? '')}</select></span></td>
   <td class="pb-c-st" data-status>${r.statusCell}</td>

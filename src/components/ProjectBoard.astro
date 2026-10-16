@@ -125,24 +125,20 @@ const payload = JSON.stringify({ project, ui }).replace(/</g, '\\u003c');
       commit(B.openModal(s, modal));
     };
 
-    // Update one question row in place, so the field being typed in keeps focus.
-    // lock: true once the field is left; an answered row then becomes read-only
-    const patchRow = (num: number, lock: boolean) => {
+    // Refresh one answer field's placeholder and submit button while typing; the draft lives in state
+    const paintDraft = (num: number) => {
       const row = root.querySelector<HTMLTableRowElement>(`tr[data-num="${num}"]`);
       const q = s.questions.find((item) => item.num === num);
       if (!row || !q) return;
       const r = qaRowState(s, q, ui);
-      const open = B.isOpen(q);
-      row.style.cssText = r.rowStyle;
-      row.classList.toggle('is-answered', !open);
-      row.querySelector('[data-dates]')!.innerHTML = r.dates;
-      row.querySelector('[data-status]')!.innerHTML = r.statusCell;
       row.querySelector<HTMLElement>('[data-shadow]')!.dataset.value = `${r.shadow} `;
-      const answer = row.querySelector<HTMLTextAreaElement>('textarea[data-field="a"]');
-      answer?.classList.toggle('is-empty', open);
-      if (lock && answer) answer.readOnly = !open;
-      const activity = row.querySelector<HTMLSelectElement>('select[data-change="q-act"]');
-      if (lock && activity) activity.disabled = !open;
+      row.querySelector('textarea[data-field="a"]')?.classList.toggle('is-empty', r.answerClass !== '');
+      row.querySelector<HTMLButtonElement>('[data-act="q-submit"]')!.hidden = !r.showSubmit;
+    };
+
+    // Save the draft as the answer; the row locks on re-render
+    const submit = (num: number) => {
+      commit(B.submitAnswer(s, num), ['cluster', 'activities', 'qaFilters', 'qaBody']);
     };
 
     const confirmModal = () => {
@@ -250,6 +246,9 @@ const payload = JSON.stringify({ project, ui }).replace(/</g, '\\u003c');
         case 'q-dec':
           commit(B.toggleDecision(s, num), ['qaFilters', 'qaBody']);
           break;
+        case 'q-submit':
+          submit(num);
+          break;
         case 'q-menu':
           commit(B.toggleMenu(s, `q:${num}`), ['qaBody']);
           break;
@@ -279,10 +278,9 @@ const payload = JSON.stringify({ project, ui }).replace(/</g, '\\u003c');
         s = B.setNewQuestion(s, el.value);
         el.parentElement!.dataset.value = `${el.value} `;
       } else if (el.dataset.field === 'a') {
-        s = B.patchQuestion(s, num, { answer: el.value });
-        patchRow(num, false);
-        // Open count feeds the header, the activity chips and the filter badges
-        render(['cluster', 'activities', 'qaFilters']);
+        // Drafts do not change status, so nothing else re-renders until submit
+        s = B.setDraft(s, num, el.value);
+        paintDraft(num);
       }
     });
 
@@ -294,14 +292,16 @@ const payload = JSON.stringify({ project, ui }).replace(/</g, '\\u003c');
         commit(B.patchQuestion(s, Number(el.dataset.num), { activity: el.value || null }), ['cluster', 'activities', 'qaBody']);
       } else if (el.dataset.change === 'new-act') {
         s = B.setNewActivity(s, el.value);
-      } else if (el.dataset.field === 'a') {
-        // Leaving the answer field locks an answered row
-        patchRow(Number(el.dataset.num), true);
       }
     });
 
     root.addEventListener('keydown', (event) => {
       const el = event.target as HTMLElement;
+      if (el.dataset.field === 'a' && event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+        event.preventDefault();
+        submit(Number(el.dataset.num));
+        return;
+      }
       if (el.id === 'pb-qa-new' && event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
         event.preventDefault();
         const question = s.newQuestion.trim();
